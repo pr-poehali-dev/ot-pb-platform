@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
 
 const NAV = [
   { id: 'overview', label: 'Обзор', icon: 'LayoutGrid' },
+  { id: 'directories', label: 'Единые справочники', icon: 'Library', to: '/directories' },
   { id: 'auth', label: 'Авторизация', icon: 'KeyRound' },
   { id: 'users', label: 'Пользователи', icon: 'Users' },
   { id: 'roles', label: 'Роли', icon: 'ShieldCheck' },
@@ -40,6 +42,7 @@ const toneClass: Record<string, string> = {
 
 const Index = () => {
   const [active, setActive] = useState('overview');
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen grid-bg text-foreground">
@@ -62,7 +65,7 @@ const Index = () => {
             {NAV.map((item) => (
               <button
                 key={item.id}
-                onClick={() => setActive(item.id)}
+                onClick={() => (item.to ? navigate(item.to) : setActive(item.id))}
                 className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all ${
                   active === item.id
                     ? 'bg-primary/10 text-primary'
