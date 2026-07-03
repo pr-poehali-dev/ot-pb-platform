@@ -7,8 +7,12 @@ import {
   EntityHistoryEvent,
   EntityStatus,
 } from '@/data/entities';
+import { eventBus, CoreEventType, EntityDomainEventPayload } from '@/core';
 
 export const CURRENT_USER = 'Администратор';
+
+/** Домен сущностей иерархии в терминах Event Bus / Audit Log: hierarchy.<level> */
+export const entityRef = (node: Pick<Node, 'id' | 'level'>) => ({ type: `hierarchy.${node.level}`, id: node.id });
 
 let idCounter = 1000;
 const nextId = (prefix: string) => {
@@ -71,6 +75,11 @@ const EntityStoreContext = createContext<EntityStoreValue | null>(null);
 
 const levelMetaLookup = (level: LevelId) => LEVELS_META.find((l) => l.id === level)!;
 
+/** Публикация доменного события сущности только через Event Bus (единая точка входа для Audit Log). */
+const emitEntityEvent = (type: string, payload: EntityDomainEventPayload) => {
+  eventBus.emit<EntityDomainEventPayload>(type, payload, 'entity-store');
+};
+
 export const EntityStoreProvider = ({ children }: { children: ReactNode }) => {
   const [nodes, setNodes] = useState<Node[]>(INITIAL_NODES);
 
@@ -117,6 +126,11 @@ export const EntityStoreProvider = ({ children }: { children: ReactNode }) => {
       ],
     };
     setNodes((prev) => [...prev, newNode]);
+    emitEntityEvent(CoreEventType.EntityCreated, {
+      entity: entityRef(newNode),
+      actor: CURRENT_USER,
+      description: `Создана сущность «${newNode.name}» (${getMeta(newNode.level).label})`,
+    });
     return newNode;
   };
 
@@ -125,10 +139,23 @@ export const EntityStoreProvider = ({ children }: { children: ReactNode }) => {
       prev.map((n) => {
         if (n.id !== id) return n;
         const changes: string[] = [];
-        if (n.name !== input.name) changes.push(`название «${n.name}» → «${input.name}»`);
-        if (n.code !== input.code) changes.push(`код «${n.code}» → «${input.code}»`);
-        if ((n.owner ?? '') !== input.owner) changes.push(`ответственный «${n.owner ?? '—'}» → «${input.owner}»`);
-        if ((n.description ?? '') !== (input.description ?? '')) changes.push('описание');
+        const diff: Record<string, { before: unknown; after: unknown }> = {};
+        if (n.name !== input.name) {
+          changes.push(`название «${n.name}» → «${input.name}»`);
+          diff.name = { before: n.name, after: input.name };
+        }
+        if (n.code !== input.code) {
+          changes.push(`код «${n.code}» → «${input.code}»`);
+          diff.code = { before: n.code, after: input.code };
+        }
+        if ((n.owner ?? '') !== input.owner) {
+          changes.push(`ответственный «${n.owner ?? '—'}» → «${input.owner}»`);
+          diff.owner = { before: n.owner, after: input.owner };
+        }
+        if ((n.description ?? '') !== (input.description ?? '')) {
+          changes.push('описание');
+          diff.description = { before: n.description, after: input.description };
+        }
 
         const historyEntry: EntityHistoryEvent = {
           id: nextId('h'),
@@ -138,7 +165,7 @@ export const EntityStoreProvider = ({ children }: { children: ReactNode }) => {
           icon: 'Pencil',
         };
 
-        return {
+        const updated: Node = {
           ...n,
           name: input.name,
           code: input.code,
@@ -147,30 +174,47 @@ export const EntityStoreProvider = ({ children }: { children: ReactNode }) => {
           updatedAt: todayStr(),
           history: [...(n.history ?? []), historyEntry],
         };
+
+        emitEntityEvent(CoreEventType.EntityUpdated, {
+          entity: entityRef(updated),
+          actor: CURRENT_USER,
+          description: changes.length ? `Изменено: ${changes.join(', ')}` : 'Данные обновлены без изменений',
+          diff: Object.keys(diff).length ? diff : undefined,
+        });
+
+        return updated;
       })
     );
   };
 
-  const setStatus = (id: string, status: EntityStatus, action: string, icon: string) => {
+  const setStatus = (id: string, status: EntityStatus, action: string, icon: string, eventType: string) => {
     setNodes((prev) =>
-      prev.map((n) =>
-        n.id === id
-          ? {
-              ...n,
-              status,
-              updatedAt: todayStr(),
-              history: [
-                ...(n.history ?? []),
-                { id: nextId('h'), action, author: CURRENT_USER, date: nowStamp(), icon },
-              ],
-            }
-          : n
-      )
+      prev.map((n) => {
+        if (n.id !== id) return n;
+        const updated: Node = {
+          ...n,
+          status,
+          updatedAt: todayStr(),
+          history: [
+            ...(n.history ?? []),
+            { id: nextId('h'), action, author: CURRENT_USER, date: nowStamp(), icon },
+          ],
+        };
+        emitEntityEvent(eventType, {
+          entity: entityRef(updated),
+          actor: CURRENT_USER,
+          description: action,
+          diff: { status: { before: n.status, after: status } },
+        });
+        return updated;
+      })
     );
   };
 
-  const archiveEntity = (id: string) => setStatus(id, 'Архив', 'Сущность архивирована', 'Archive');
-  const restoreEntity = (id: string) => setStatus(id, 'Активен', 'Сущность восстановлена из архива', 'RotateCcw');
+  const archiveEntity = (id: string) =>
+    setStatus(id, 'Архив', 'Сущность архивирована', 'Archive', CoreEventType.EntityArchived);
+  const restoreEntity = (id: string) =>
+    setStatus(id, 'Активен', 'Сущность восстановлена из архива', 'RotateCcw', CoreEventType.EntityRestored);
 
   return (
     <EntityStoreContext.Provider

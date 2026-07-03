@@ -1,6 +1,15 @@
 import { EntityRef } from '../types';
 
-export type AuditAction = 'create' | 'update' | 'archive' | 'restore' | 'view' | 'custom';
+export type AuditAction =
+  | 'create'
+  | 'update'
+  | 'delete'
+  | 'archive'
+  | 'restore'
+  | 'status_change'
+  | 'parent_change'
+  | 'view'
+  | 'custom';
 
 export interface AuditEntry {
   id: string;

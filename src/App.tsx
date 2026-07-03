@@ -12,6 +12,10 @@ import EntityCard from "./pages/EntityCard";
 import NotFound from "./pages/NotFound";
 import { EntityStoreProvider } from "./context/EntityStoreContext";
 import { DictionaryStoreProvider } from "./context/DictionaryStoreContext";
+import { initAuditEventBridge } from "@/core";
+
+// Единая точка подключения Audit Log к Event Bus для всей платформы.
+initAuditEventBridge();
 
 const queryClient = new QueryClient();
 
