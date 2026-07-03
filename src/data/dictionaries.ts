@@ -1,5 +1,12 @@
 export type DictionaryStatus = 'Активен' | 'Черновик' | 'Архив';
 
+export type DictionaryCategory =
+  | 'structure'
+  | 'personnel'
+  | 'production'
+  | 'hse'
+  | 'system';
+
 export interface DictionaryField {
   key: string;
   label: string;
@@ -26,9 +33,25 @@ export interface DictionaryConfig {
   icon: string;
   description: string;
   codePrefix: string;
+  category: DictionaryCategory;
+  frequent?: boolean;
   fields: DictionaryField[];
   seed: DictionaryItem[];
 }
+
+export interface CategoryMeta {
+  id: DictionaryCategory;
+  label: string;
+  icon: string;
+}
+
+export const CATEGORIES: CategoryMeta[] = [
+  { id: 'structure', label: 'Организационная структура', icon: 'Building2' },
+  { id: 'personnel', label: 'Персонал', icon: 'Users' },
+  { id: 'production', label: 'Производство', icon: 'Wrench' },
+  { id: 'hse', label: 'HSE', icon: 'ShieldAlert' },
+  { id: 'system', label: 'Системные', icon: 'Settings2' },
+];
 
 const baseFields: DictionaryField[] = [
   { key: 'name', label: 'Название', type: 'text', required: true },
@@ -38,12 +61,15 @@ const baseFields: DictionaryField[] = [
 ];
 
 export const DICTIONARIES: DictionaryConfig[] = [
+  // Организационная структура
   {
     id: 'organizations',
     title: 'Организации',
     icon: 'Globe2',
     description: 'Организации (tenant) верхнего уровня платформы',
     codePrefix: 'ORG',
+    category: 'structure',
+    frequent: true,
     fields: baseFields,
     seed: [
       { id: 'org-1', code: 'ORG-001', name: 'Noventra Holding', status: 'Активен', owner: 'Иванов И. И.', createdAt: '05.01.2026', updatedAt: '02.03.2026', description: 'Головная организация платформы.' },
@@ -55,6 +81,8 @@ export const DICTIONARIES: DictionaryConfig[] = [
     icon: 'Landmark',
     description: 'Юридические лица-заказчики в составе организаций',
     codePrefix: 'CMP',
+    category: 'structure',
+    frequent: true,
     fields: baseFields,
     seed: [
       { id: 'cmp-1', code: 'CMP-001', name: 'ООО «СтройИнвест Групп»', status: 'Активен', owner: 'Иванов И. И.', createdAt: '12.01.2026', updatedAt: '02.03.2026', description: 'Генеральный заказчик реконструкции.' },
@@ -67,6 +95,8 @@ export const DICTIONARIES: DictionaryConfig[] = [
     icon: 'FolderKanban',
     description: 'Проекты в рамках компаний-заказчиков',
     codePrefix: 'PRJ',
+    category: 'structure',
+    frequent: true,
     fields: baseFields,
     seed: [
       { id: 'prj-101', code: 'PRJ-101', name: 'Реконструкция ГПП-12', status: 'Активен', owner: 'Смирнова А. В.', createdAt: '15.01.2026', updatedAt: '28.02.2026', description: 'Реконструкция подстанции.' },
@@ -79,6 +109,7 @@ export const DICTIONARIES: DictionaryConfig[] = [
     icon: 'Boxes',
     description: 'Объекты капитального строительства',
     codePrefix: 'OBJ',
+    category: 'structure',
     fields: baseFields,
     seed: [
       { id: 'obj-201', code: 'OBJ-201', name: 'Подстанция 110/10 кВ', status: 'Активен', owner: 'Фёдоров Н. К.', createdAt: '18.01.2026', updatedAt: '27.02.2026', description: 'Понизительная подстанция.' },
@@ -91,6 +122,7 @@ export const DICTIONARIES: DictionaryConfig[] = [
     icon: 'HardHat',
     description: 'Территории проведения строительных работ',
     codePrefix: 'SITE',
+    category: 'structure',
     fields: baseFields,
     seed: [
       { id: 'site-301', code: 'SITE-301', name: 'Площадка №1 (Северная)', status: 'Активен', owner: 'Волков С. И.', createdAt: '22.01.2026', updatedAt: '26.02.2026', description: 'Северная площадка.' },
@@ -103,6 +135,7 @@ export const DICTIONARIES: DictionaryConfig[] = [
     icon: 'Handshake',
     description: 'Организации-исполнители работ на площадках',
     codePrefix: 'CTR',
+    category: 'structure',
     fields: baseFields,
     seed: [
       { id: 'ctr-401', code: 'CTR-401', name: 'ООО «ЭнергоМонтаж»', status: 'Активен', owner: 'Соколов В. Г.', createdAt: '25.01.2026', updatedAt: '28.02.2026', description: 'Электромонтажные работы.' },
@@ -115,18 +148,23 @@ export const DICTIONARIES: DictionaryConfig[] = [
     icon: 'Network',
     description: 'Бригады и участки подрядных организаций',
     codePrefix: 'SUB',
+    category: 'structure',
     fields: baseFields,
     seed: [
       { id: 'sub-501', code: 'SUB-501', name: 'Бригада электромонтажников №2', status: 'Активен', owner: 'Тарасов К. Л.', createdAt: '28.01.2026', updatedAt: '27.02.2026', description: 'Электромонтажные работы.' },
       { id: 'sub-502', code: 'SUB-502', name: 'Участок каменщиков', status: 'Активен', owner: 'Белова Ю. Н.', createdAt: '05.03.2026', updatedAt: '06.03.2026', description: 'Каменные работы.' },
     ],
   },
+
+  // Персонал
   {
     id: 'users',
     title: 'Пользователи',
     icon: 'User',
     description: 'Учётные записи сотрудников платформы',
     codePrefix: 'USR',
+    category: 'personnel',
+    frequent: true,
     fields: baseFields,
     seed: [
       { id: 'usr-601', code: 'USR-601', name: 'Дмитриев А. С.', status: 'Активен', owner: 'Тарасов К. Л.', createdAt: '29.01.2026', updatedAt: '29.01.2026', description: 'Электромонтажник 5-го разряда.' },
@@ -139,6 +177,7 @@ export const DICTIONARIES: DictionaryConfig[] = [
     icon: 'BriefcaseBusiness',
     description: 'Штатные должности сотрудников',
     codePrefix: 'POS',
+    category: 'personnel',
     fields: baseFields,
     seed: [
       { id: 'pos-1', code: 'POS-001', name: 'Инженер по охране труда', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
@@ -151,18 +190,23 @@ export const DICTIONARIES: DictionaryConfig[] = [
     icon: 'HardHat',
     description: 'Рабочие профессии на объектах',
     codePrefix: 'PRF',
+    category: 'personnel',
     fields: baseFields,
     seed: [
       { id: 'prf-1', code: 'PRF-001', name: 'Электромонтажник', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
       { id: 'prf-2', code: 'PRF-002', name: 'Сварщик', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
     ],
   },
+
+  // Производство
   {
     id: 'work-types',
     title: 'Виды работ',
     icon: 'Wrench',
     description: 'Классификатор выполняемых видов работ',
     codePrefix: 'WRK',
+    category: 'production',
+    frequent: true,
     fields: baseFields,
     seed: [
       { id: 'wrk-1', code: 'WRK-001', name: 'Электромонтажные работы', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
@@ -175,6 +219,7 @@ export const DICTIONARIES: DictionaryConfig[] = [
     icon: 'Truck',
     description: 'Спецтехника и оборудование',
     codePrefix: 'EQP',
+    category: 'production',
     fields: baseFields,
     seed: [
       { id: 'eqp-1', code: 'EQP-001', name: 'Автокран', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
@@ -182,23 +227,28 @@ export const DICTIONARIES: DictionaryConfig[] = [
     ],
   },
   {
-    id: 'document-categories',
-    title: 'Категории документов',
-    icon: 'FileText',
-    description: 'Классификатор типов документов платформы',
-    codePrefix: 'DOC',
+    id: 'ppe',
+    title: 'СИЗ',
+    icon: 'ShieldHalf',
+    description: 'Средства индивидуальной защиты',
+    codePrefix: 'PPE',
+    category: 'production',
     fields: baseFields,
     seed: [
-      { id: 'doc-1', code: 'DOC-001', name: 'Приказ', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
-      { id: 'doc-2', code: 'DOC-002', name: 'Разрешение на работы', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
+      { id: 'ppe-1', code: 'PPE-001', name: 'Каска защитная', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
+      { id: 'ppe-2', code: 'PPE-002', name: 'Страховочная привязь', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
     ],
   },
+
+  // HSE
   {
     id: 'violation-types',
     title: 'Типы нарушений',
     icon: 'TriangleAlert',
     description: 'Классификатор нарушений ОТ и ПБ',
     codePrefix: 'VIO',
+    category: 'hse',
+    frequent: true,
     fields: baseFields,
     seed: [
       { id: 'vio-1', code: 'VIO-001', name: 'Отсутствие СИЗ', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
@@ -211,6 +261,7 @@ export const DICTIONARIES: DictionaryConfig[] = [
     icon: 'ShieldAlert',
     description: 'Классификатор производственных рисков',
     codePrefix: 'RSK',
+    category: 'hse',
     fields: baseFields,
     seed: [
       { id: 'rsk-1', code: 'RSK-001', name: 'Падение с высоты', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
@@ -218,15 +269,16 @@ export const DICTIONARIES: DictionaryConfig[] = [
     ],
   },
   {
-    id: 'ppe',
-    title: 'СИЗ',
-    icon: 'HardHat',
-    description: 'Средства индивидуальной защиты',
-    codePrefix: 'PPE',
+    id: 'document-categories',
+    title: 'Категории документов',
+    icon: 'FileText',
+    description: 'Классификатор типов документов платформы',
+    codePrefix: 'DOC',
+    category: 'hse',
     fields: baseFields,
     seed: [
-      { id: 'ppe-1', code: 'PPE-001', name: 'Каска защитная', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
-      { id: 'ppe-2', code: 'PPE-002', name: 'Страховочная привязь', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
+      { id: 'doc-1', code: 'DOC-001', name: 'Приказ', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
+      { id: 'doc-2', code: 'DOC-002', name: 'Разрешение на работы', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
     ],
   },
   {
@@ -235,18 +287,22 @@ export const DICTIONARIES: DictionaryConfig[] = [
     icon: 'MapPinned',
     description: 'Привязка людей к объектам и участкам',
     codePrefix: 'ZON',
+    category: 'hse',
     fields: baseFields,
     seed: [
       { id: 'zon-1', code: 'ZON-001', name: 'Зона №1 — Северная площадка', status: 'Активен', owner: 'Волков С. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
       { id: 'zon-2', code: 'ZON-002', name: 'Зона №2 — Складская площадка', status: 'Активен', owner: 'Никитина О. А.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
     ],
   },
+
+  // Системные
   {
     id: 'statuses',
     title: 'Статусы',
     icon: 'CircleDot',
     description: 'Статусы объектов и процессов платформы',
     codePrefix: 'STS',
+    category: 'system',
     fields: baseFields,
     seed: [
       { id: 'sts-1', code: 'STS-001', name: 'Активен', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
@@ -259,6 +315,7 @@ export const DICTIONARIES: DictionaryConfig[] = [
     icon: 'MessageSquareWarning',
     description: 'Классификатор причин событий и решений',
     codePrefix: 'RSN',
+    category: 'system',
     fields: baseFields,
     seed: [
       { id: 'rsn-1', code: 'RSN-001', name: 'Плановая проверка', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
@@ -271,6 +328,7 @@ export const DICTIONARIES: DictionaryConfig[] = [
     icon: 'ListTree',
     description: 'Общие классификаторы платформы',
     codePrefix: 'CLS',
+    category: 'system',
     fields: baseFields,
     seed: [
       { id: 'cls-1', code: 'CLS-001', name: 'ОКВЭД', status: 'Активен', owner: 'Иванов И. И.', createdAt: '10.01.2026', updatedAt: '10.01.2026' },
@@ -286,3 +344,5 @@ export const statusTone: Record<DictionaryStatus, string> = {
 };
 
 export const getDictionaryConfig = (id: string) => DICTIONARIES.find((d) => d.id === id);
+export const getCategoryMeta = (id: DictionaryCategory) => CATEGORIES.find((c) => c.id === id)!;
+export const getDictionariesByCategory = (id: DictionaryCategory) => DICTIONARIES.filter((d) => d.category === id);
