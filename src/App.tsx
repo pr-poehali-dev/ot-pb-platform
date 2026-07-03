@@ -5,7 +5,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
-import Directories from "./pages/Directories";
 import DictionaryDetail from "./pages/DictionaryDetail";
 import Hierarchy from "./pages/Hierarchy";
 import EntityLinks from "./pages/EntityLinks";
@@ -26,7 +25,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/directories" element={<Directories />} />
+              <Route path="/directories" element={<DictionaryDetail />} />
               <Route path="/directories/:id" element={<DictionaryDetail />} />
               <Route path="/hierarchy" element={<Hierarchy />} />
               <Route path="/entity-links" element={<EntityLinks />} />
