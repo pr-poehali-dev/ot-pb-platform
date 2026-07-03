@@ -22,7 +22,7 @@ const EntityLinks = () => {
 
   const [formOpen, setFormOpen] = useState(false);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
-  const [formLevel, setFormLevel] = useState<LevelId>('company');
+  const [formLevel, setFormLevel] = useState<LevelId>('organization');
   const [formEntity, setFormEntity] = useState<Node | undefined>();
 
   const [statusOpen, setStatusOpen] = useState(false);
@@ -35,7 +35,8 @@ const EntityLinks = () => {
   const childLevelId: LevelId | null = children[0]?.level ?? null;
 
   const CHILD_LEVEL_MAP: Record<LevelId, LevelId | null> = {
-    root: 'company',
+    root: 'organization',
+    organization: 'company',
     company: 'project',
     project: 'object',
     object: 'site',
@@ -106,7 +107,7 @@ const EntityLinks = () => {
             Связи <span className="text-primary text-glow">сущностей</span>
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Навигация по утверждённой иерархии Noventra: от компании-заказчика до конечного пользователя.
+            Навигация по утверждённой иерархии Noventra: от организации (tenant) до конечного пользователя.
           </p>
         </header>
 

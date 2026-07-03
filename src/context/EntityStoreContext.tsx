@@ -28,6 +28,7 @@ const nowStamp = () => {
 
 const CODE_PREFIX: Record<LevelId, string> = {
   root: 'ROOT',
+  organization: 'ORG',
   company: 'CMP',
   project: 'PRJ',
   object: 'OBJ',

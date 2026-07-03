@@ -1,4 +1,4 @@
-export type LevelId = 'root' | 'company' | 'project' | 'object' | 'site' | 'contractor' | 'subdivision' | 'user';
+export type LevelId = 'root' | 'organization' | 'company' | 'project' | 'object' | 'site' | 'contractor' | 'subdivision' | 'user';
 
 export type EntityStatus = 'Активен' | 'В работе' | 'Черновик' | 'Архив';
 
@@ -42,7 +42,8 @@ export interface LevelMeta {
 }
 
 export const LEVELS_META: LevelMeta[] = [
-  { id: 'root', label: 'Noventra Core', icon: 'Hexagon', childLabel: 'Компании' },
+  { id: 'root', label: 'Noventra Core', icon: 'Hexagon', childLabel: 'Организации' },
+  { id: 'organization', label: 'Организация (Tenant)', icon: 'Globe2', childLabel: 'Компании организации' },
   { id: 'company', label: 'Компания (Заказчик)', icon: 'Landmark', childLabel: 'Проекты компании' },
   { id: 'project', label: 'Проект', icon: 'FolderKanban', childLabel: 'Объекты проекта' },
   { id: 'object', label: 'Объект', icon: 'Boxes', childLabel: 'Строительные площадки объекта' },
@@ -66,8 +67,10 @@ const defaultHistory: EntityHistoryEvent[] = [
 export const NODES: Node[] = [
   { id: 'root', level: 'root', name: 'Noventra Core', code: '—', parentId: null },
 
-  { id: 'cmp-1', level: 'company', name: 'ООО «СтройИнвест Групп»', code: 'CMP-001', status: 'Активен', parentId: 'root', owner: 'Иванов И. И.', createdAt: '12.01.2026', updatedAt: '02.03.2026', description: 'Генеральный заказчик по реконструкции энергетических объектов и строительству складской инфраструктуры.', relatedUsers: ['Иванов И. И.', 'Смирнова А. В.', 'Волкова Т. Н.'], documents: defaultDocs, history: defaultHistory },
-  { id: 'cmp-2', level: 'company', name: 'АО «СевТрансСтрой»', code: 'CMP-002', status: 'Активен', parentId: 'root', owner: 'Петров П. П.', createdAt: '03.02.2026', updatedAt: '01.03.2026', description: 'Заказчик строительства логистических и складских комплексов.', relatedUsers: ['Петров П. П.', 'Кузнецов Д. С.'], documents: defaultDocs, history: defaultHistory },
+  { id: 'org-1', level: 'organization', name: 'Noventra Holding', code: 'ORG-001', status: 'Активен', parentId: 'root', owner: 'Иванов И. И.', createdAt: '05.01.2026', updatedAt: '02.03.2026', description: 'Головная организация (tenant) платформы — управляет всеми компаниями-заказчиками в рамках единого контура Noventra Core.', relatedUsers: ['Иванов И. И.', 'Петров П. П.'], documents: defaultDocs, history: defaultHistory },
+
+  { id: 'cmp-1', level: 'company', name: 'ООО «СтройИнвест Групп»', code: 'CMP-001', status: 'Активен', parentId: 'org-1', owner: 'Иванов И. И.', createdAt: '12.01.2026', updatedAt: '02.03.2026', description: 'Генеральный заказчик по реконструкции энергетических объектов и строительству складской инфраструктуры.', relatedUsers: ['Иванов И. И.', 'Смирнова А. В.', 'Волкова Т. Н.'], documents: defaultDocs, history: defaultHistory },
+  { id: 'cmp-2', level: 'company', name: 'АО «СевТрансСтрой»', code: 'CMP-002', status: 'Активен', parentId: 'org-1', owner: 'Петров П. П.', createdAt: '03.02.2026', updatedAt: '01.03.2026', description: 'Заказчик строительства логистических и складских комплексов.', relatedUsers: ['Петров П. П.', 'Кузнецов Д. С.'], documents: defaultDocs, history: defaultHistory },
 
   { id: 'prj-101', level: 'project', name: 'Реконструкция ГПП-12', code: 'PRJ-101', status: 'В работе', parentId: 'cmp-1', owner: 'Смирнова А. В.', createdAt: '15.01.2026', updatedAt: '28.02.2026', description: 'Реконструкция главной понизительной подстанции ГПП-12 с заменой оборудования РУ.', relatedUsers: ['Смирнова А. В.', 'Фёдоров Н. К.', 'Лебедев А. О.'], documents: defaultDocs, history: defaultHistory },
   { id: 'prj-103', level: 'project', name: 'Модернизация ЛЭП №7', code: 'PRJ-103', status: 'Черновик', parentId: 'cmp-1', owner: 'Волкова Т. Н.', createdAt: '02.02.2026', updatedAt: '02.02.2026', description: 'Модернизация линии электропередачи №7, замена опор и проводов.', relatedUsers: ['Волкова Т. Н.'], documents: defaultDocs, history: defaultHistory },

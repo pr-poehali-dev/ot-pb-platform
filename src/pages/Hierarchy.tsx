@@ -18,7 +18,7 @@ const Hierarchy = () => {
 
   const [formOpen, setFormOpen] = useState(false);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
-  const [formLevel, setFormLevel] = useState<LevelId>('company');
+  const [formLevel, setFormLevel] = useState<LevelId>('organization');
   const [formParentId, setFormParentId] = useState<string>('root');
   const [formEntity, setFormEntity] = useState<Node | undefined>();
 
@@ -35,7 +35,8 @@ const Hierarchy = () => {
   };
 
   const openCreate = (level: LevelId) => {
-    const parentLevel = level === 'company' ? 'root' : DISPLAY_LEVELS[DISPLAY_LEVELS.findIndex((l) => l.id === level) - 1]?.id;
+    const levelIdx = DISPLAY_LEVELS.findIndex((l) => l.id === level);
+    const parentLevel: LevelId = levelIdx <= 0 ? 'root' : DISPLAY_LEVELS[levelIdx - 1].id;
     const parentPool = nodes.filter((n) => n.level === parentLevel);
     const parentId = parentLevel === 'root' ? 'root' : parentPool[0]?.id ?? 'root';
     setFormMode('create');
@@ -99,7 +100,7 @@ const Hierarchy = () => {
             Иерархия <span className="text-primary text-glow">данных</span>
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Сквозная структура сущностей платформы: от компании-заказчика до конечного пользователя на площадке.
+            Сквозная структура сущностей платформы: от организации (tenant) до конечного пользователя на площадке.
           </p>
         </header>
 
@@ -239,7 +240,7 @@ const Hierarchy = () => {
 
         <footer className="mt-14 flex items-center justify-between border-t border-border pt-6 font-mono text-[11px] text-muted-foreground">
           <span>Noventra Core · Иерархия данных</span>
-          <span>7 уровней структуры</span>
+          <span>8 уровней структуры</span>
         </footer>
       </main>
 
