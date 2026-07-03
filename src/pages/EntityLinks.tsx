@@ -1,18 +1,84 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
-import { getNode, getChildren, getMeta, getPath, statusTone } from '@/data/entities';
+import { statusTone, LevelId, Node } from '@/data/entities';
+import { useEntityStore } from '@/context/EntityStoreContext';
+import EntityActionsMenu from '@/components/entity/EntityActionsMenu';
+import EntityFormDialog from '@/components/entity/EntityFormDialog';
+import EntityStatusDialog from '@/components/entity/EntityStatusDialog';
+import EntityHistoryDialog from '@/components/entity/EntityHistoryDialog';
 
 const EntityLinks = () => {
   const navigate = useNavigate();
+  const { getNode, getChildren, getMeta, getPath } = useEntityStore();
   const [selectedId, setSelectedId] = useState('root');
 
-  const node = getNode(selectedId);
+  const node = getNode(selectedId)!;
   const meta = getMeta(node.level);
   const parent = node.parentId ? getNode(node.parentId) : null;
   const parentMeta = parent ? getMeta(parent.level) : null;
   const children = getChildren(node.id);
   const path = getPath(node.id);
+
+  const [formOpen, setFormOpen] = useState(false);
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
+  const [formLevel, setFormLevel] = useState<LevelId>('company');
+  const [formEntity, setFormEntity] = useState<Node | undefined>();
+
+  const [statusOpen, setStatusOpen] = useState(false);
+  const [statusAction, setStatusAction] = useState<'archive' | 'restore'>('archive');
+  const [statusEntity, setStatusEntity] = useState<Node | undefined>();
+
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyEntity, setHistoryEntity] = useState<Node | undefined>();
+
+  const childLevelId: LevelId | null = children[0]?.level ?? null;
+
+  const CHILD_LEVEL_MAP: Record<LevelId, LevelId | null> = {
+    root: 'company',
+    company: 'project',
+    project: 'object',
+    object: 'site',
+    site: 'contractor',
+    contractor: 'subdivision',
+    subdivision: 'user',
+    user: null,
+  };
+
+  const openCreateChild = () => {
+    const level = childLevelId ?? CHILD_LEVEL_MAP[node.level];
+    if (!level) return;
+    setFormMode('create');
+    setFormLevel(level);
+    setFormEntity(undefined);
+    setFormOpen(true);
+  };
+
+  const openEdit = (entity: Node) => {
+    setFormMode('edit');
+    setFormLevel(entity.level);
+    setFormEntity(entity);
+    setFormOpen(true);
+  };
+
+  const openArchive = (entity: Node) => {
+    setStatusEntity(entity);
+    setStatusAction('archive');
+    setStatusOpen(true);
+  };
+
+  const openRestore = (entity: Node) => {
+    setStatusEntity(entity);
+    setStatusAction('restore');
+    setStatusOpen(true);
+  };
+
+  const openHistory = (entity: Node) => {
+    setHistoryEntity(entity);
+    setHistoryOpen(true);
+  };
+
+  const formMeta = getMeta(formLevel);
 
   return (
     <div className="min-h-screen grid-bg text-foreground">
@@ -93,13 +159,22 @@ const EntityLinks = () => {
                 </span>
               )}
               {node.level !== 'root' && (
-                <button
-                  onClick={() => navigate(`/entity/${node.id}`)}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
-                >
-                  <Icon name="IdCard" size={14} />
-                  Открыть карточку
-                </button>
+                <>
+                  <button
+                    onClick={() => navigate(`/entity/${node.id}`)}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
+                  >
+                    <Icon name="IdCard" size={14} />
+                    Открыть карточку
+                  </button>
+                  <EntityActionsMenu
+                    entity={node}
+                    onEdit={openEdit}
+                    onArchive={openArchive}
+                    onRestore={openRestore}
+                    onHistory={openHistory}
+                  />
+                </>
               )}
             </div>
           </div>
@@ -142,7 +217,10 @@ const EntityLinks = () => {
               </span>
             </div>
             {meta.childLabel && (
-              <button className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:glow">
+              <button
+                onClick={openCreateChild}
+                className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:glow"
+              >
                 <Icon name="Plus" size={16} />
                 Добавить дочерний элемент
               </button>
@@ -201,6 +279,13 @@ const EntityLinks = () => {
                       >
                         <Icon name="IdCard" size={16} />
                       </button>
+                      <EntityActionsMenu
+                        entity={child}
+                        onEdit={openEdit}
+                        onArchive={openArchive}
+                        onRestore={openRestore}
+                        onHistory={openHistory}
+                      />
                     </div>
                   </div>
                 );
@@ -221,6 +306,17 @@ const EntityLinks = () => {
           <span>Уровень: {meta.label}</span>
         </footer>
       </main>
+
+      <EntityFormDialog
+        open={formOpen}
+        onOpenChange={setFormOpen}
+        mode={formMode}
+        meta={formMeta}
+        parentId={node.id}
+        entity={formEntity}
+      />
+      <EntityStatusDialog open={statusOpen} onOpenChange={setStatusOpen} action={statusAction} entity={statusEntity} />
+      <EntityHistoryDialog open={historyOpen} onOpenChange={setHistoryOpen} entity={historyEntity} />
     </div>
   );
 };

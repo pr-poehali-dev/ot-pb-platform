@@ -10,6 +10,7 @@ import Hierarchy from "./pages/Hierarchy";
 import EntityLinks from "./pages/EntityLinks";
 import EntityCard from "./pages/EntityCard";
 import NotFound from "./pages/NotFound";
+import { EntityStoreProvider } from "./context/EntityStoreContext";
 
 const queryClient = new QueryClient();
 
@@ -18,17 +19,19 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/directories" element={<Directories />} />
-          <Route path="/hierarchy" element={<Hierarchy />} />
-          <Route path="/entity-links" element={<EntityLinks />} />
-          <Route path="/entity/:id" element={<EntityCard />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <EntityStoreProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/directories" element={<Directories />} />
+            <Route path="/hierarchy" element={<Hierarchy />} />
+            <Route path="/entity-links" element={<EntityLinks />} />
+            <Route path="/entity/:id" element={<EntityCard />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </EntityStoreProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

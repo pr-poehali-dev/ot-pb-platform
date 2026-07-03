@@ -1,13 +1,22 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import Icon from '@/components/ui/icon';
-import { getNode, getChildren, getMeta, getPath, statusTone } from '@/data/entities';
+import { statusTone } from '@/data/entities';
+import { useEntityStore } from '@/context/EntityStoreContext';
+import EntityFormDialog from '@/components/entity/EntityFormDialog';
+import EntityStatusDialog from '@/components/entity/EntityStatusDialog';
 
 const EntityCard = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { getNode, getChildren, getMeta, getPath } = useEntityStore();
 
   const node = id ? getNode(id) : undefined;
+
+  const [formOpen, setFormOpen] = useState(false);
+  const [statusOpen, setStatusOpen] = useState(false);
+  const [statusAction, setStatusAction] = useState<'archive' | 'restore'>('archive');
 
   if (!node) {
     return (
@@ -32,6 +41,8 @@ const EntityCard = () => {
   const parentMeta = parent ? getMeta(parent.level) : null;
   const children = getChildren(node.id);
   const path = getPath(node.id);
+  const isArchived = node.status === 'Архив';
+  const history = [...(node.history ?? [])].reverse();
 
   return (
     <div className="min-h-screen grid-bg text-foreground">
@@ -81,17 +92,35 @@ const EntityCard = () => {
                 </span>
               )}
               <button
+                onClick={() => setFormOpen(true)}
                 className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-accent/40 hover:text-accent"
                 title="Редактировать"
               >
                 <Icon name="Pencil" size={16} />
               </button>
-              <button
-                className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-amber-400/50 hover:text-amber-400"
-                title="Архивировать"
-              >
-                <Icon name="Archive" size={16} />
-              </button>
+              {isArchived ? (
+                <button
+                  onClick={() => {
+                    setStatusAction('restore');
+                    setStatusOpen(true);
+                  }}
+                  className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+                  title="Восстановить"
+                >
+                  <Icon name="RotateCcw" size={16} />
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setStatusAction('archive');
+                    setStatusOpen(true);
+                  }}
+                  className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-amber-400/50 hover:text-amber-400"
+                  title="Архивировать"
+                >
+                  <Icon name="Archive" size={16} />
+                </button>
+              )}
             </div>
           </div>
         </header>
@@ -271,17 +300,21 @@ const EntityCard = () => {
           <TabsContent value="history" className="mt-0">
             <div className="rounded-2xl border border-border glass p-6">
               <h3 className="mb-4 font-display text-base font-semibold">История изменений</h3>
-              {node.history && node.history.length > 0 ? (
+              {history.length > 0 ? (
                 <div className="relative space-y-5 pl-6">
                   <div className="absolute left-[7px] top-1 bottom-1 w-px bg-border" />
-                  {node.history.map((event) => (
+                  {history.map((event) => (
                     <div key={event.id} className="relative">
                       <div className="absolute -left-6 top-0.5 grid h-4 w-4 place-items-center rounded-full bg-primary/15 ring-4 ring-background">
                         <Icon name={event.icon} size={10} className="text-primary" />
                       </div>
                       <div className="text-sm font-medium">{event.action}</div>
-                      <div className="mt-0.5 font-mono text-[11px] text-muted-foreground">
-                        {event.author} · {event.date}
+                      <div className="mt-0.5 flex items-center gap-2 font-mono text-[11px] text-muted-foreground">
+                        <Icon name="UserCircle2" size={12} />
+                        {event.author}
+                        <span className="text-border">·</span>
+                        <Icon name="Clock" size={12} />
+                        {event.date}
                       </div>
                     </div>
                   ))}
@@ -300,6 +333,9 @@ const EntityCard = () => {
           <span>{meta.label}</span>
         </footer>
       </main>
+
+      <EntityFormDialog open={formOpen} onOpenChange={setFormOpen} mode="edit" meta={meta} entity={node} />
+      <EntityStatusDialog open={statusOpen} onOpenChange={setStatusOpen} action={statusAction} entity={node} />
     </div>
   );
 };
