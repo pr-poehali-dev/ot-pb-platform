@@ -6,11 +6,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Directories from "./pages/Directories";
+import DictionaryDetail from "./pages/DictionaryDetail";
 import Hierarchy from "./pages/Hierarchy";
 import EntityLinks from "./pages/EntityLinks";
 import EntityCard from "./pages/EntityCard";
 import NotFound from "./pages/NotFound";
 import { EntityStoreProvider } from "./context/EntityStoreContext";
+import { DictionaryStoreProvider } from "./context/DictionaryStoreContext";
 
 const queryClient = new QueryClient();
 
@@ -20,17 +22,20 @@ const App = () => (
       <Toaster />
       <Sonner />
       <EntityStoreProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/directories" element={<Directories />} />
-            <Route path="/hierarchy" element={<Hierarchy />} />
-            <Route path="/entity-links" element={<EntityLinks />} />
-            <Route path="/entity/:id" element={<EntityCard />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <DictionaryStoreProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/directories" element={<Directories />} />
+              <Route path="/directories/:id" element={<DictionaryDetail />} />
+              <Route path="/hierarchy" element={<Hierarchy />} />
+              <Route path="/entity-links" element={<EntityLinks />} />
+              <Route path="/entity/:id" element={<EntityCard />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </DictionaryStoreProvider>
       </EntityStoreProvider>
     </TooltipProvider>
   </QueryClientProvider>
