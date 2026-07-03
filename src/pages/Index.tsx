@@ -6,6 +6,7 @@ const NAV = [
   { id: 'overview', label: 'Обзор', icon: 'LayoutGrid' },
   { id: 'directories', label: 'Единые справочники', icon: 'Library', to: '/directories' },
   { id: 'hierarchy', label: 'Иерархия данных', icon: 'Workflow', to: '/hierarchy' },
+  { id: 'entity-links', label: 'Связи сущностей', icon: 'GitBranch', to: '/entity-links' },
   { id: 'auth', label: 'Авторизация', icon: 'KeyRound' },
   { id: 'users', label: 'Пользователи', icon: 'Users' },
   { id: 'roles', label: 'Роли', icon: 'ShieldCheck' },
