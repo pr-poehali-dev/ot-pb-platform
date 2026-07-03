@@ -5,6 +5,7 @@ import Icon from '@/components/ui/icon';
 const NAV = [
   { id: 'overview', label: 'Обзор', icon: 'LayoutGrid' },
   { id: 'directories', label: 'Единые справочники', icon: 'Library', to: '/directories' },
+  { id: 'hierarchy', label: 'Иерархия данных', icon: 'Workflow', to: '/hierarchy' },
   { id: 'auth', label: 'Авторизация', icon: 'KeyRound' },
   { id: 'users', label: 'Пользователи', icon: 'Users' },
   { id: 'roles', label: 'Роли', icon: 'ShieldCheck' },
