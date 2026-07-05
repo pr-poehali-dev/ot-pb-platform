@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import Login from "./pages/Login";
 import DictionaryDetail from "./pages/DictionaryDetail";
 import Hierarchy from "./pages/Hierarchy";
 import EntityLinks from "./pages/EntityLinks";
@@ -13,11 +14,14 @@ import NotFound from "./pages/NotFound";
 import { EntityStoreProvider } from "./context/EntityStoreContext";
 import { DictionaryStoreProvider } from "./context/DictionaryStoreContext";
 import { initAuditEventBridge, registerBuiltinProviders } from "@/core";
+import { registerDemoTranslations } from "@/i18n/registerDemoTranslations";
 
 // Единая точка подключения Audit Log к Event Bus для всей платформы.
 initAuditEventBridge();
 // Регистрация встроенных провайдеров AI Engine (API пока не подключены).
 registerBuiltinProviders();
+// Демонстрационные переводы для Language Engine (меню, кнопки, заголовки).
+registerDemoTranslations();
 
 const queryClient = new QueryClient();
 
@@ -31,6 +35,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
               <Route path="/directories" element={<DictionaryDetail />} />
               <Route path="/directories/:id" element={<DictionaryDetail />} />
               <Route path="/hierarchy" element={<Hierarchy />} />
