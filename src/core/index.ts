@@ -22,6 +22,7 @@
  *  - recent-items       — последние открытые элементы
  *  - user-settings      — настройки пользователя
  *  - language           — Language Engine (мультиязычность)
+ *  - ai-engine          — AI Engine (независимый движок искусственного интеллекта)
  */
 
 export * from './types';
@@ -41,3 +42,4 @@ export * from './favorites';
 export * from './recent-items';
 export * from './user-settings';
 export * from './language';
+export * from './ai-engine';
