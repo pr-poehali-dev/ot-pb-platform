@@ -15,6 +15,7 @@ import { EntityStoreProvider } from "./context/EntityStoreContext";
 import { DictionaryStoreProvider } from "./context/DictionaryStoreContext";
 import { initAuditEventBridge, registerBuiltinProviders } from "@/core";
 import { registerDemoTranslations } from "@/i18n/registerDemoTranslations";
+import { seedTranslationDictionary } from "@/i18n/dictionary-seed";
 
 // Единая точка подключения Audit Log к Event Bus для всей платформы.
 initAuditEventBridge();
@@ -22,6 +23,8 @@ initAuditEventBridge();
 registerBuiltinProviders();
 // Демонстрационные переводы для Language Engine (меню, кнопки, заголовки).
 registerDemoTranslations();
+// Базовый словарь Translation Management (~1000 терминов HSE-платформы).
+seedTranslationDictionary();
 
 const queryClient = new QueryClient();
 

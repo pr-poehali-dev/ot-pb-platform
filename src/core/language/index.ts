@@ -21,3 +21,4 @@ export { translationRegistry } from './translationRegistry';
 export { languageService } from './languageService';
 export { useTranslate } from './useTranslate';
 export { useLocale } from './useLocale';
+export * from './translation-management';

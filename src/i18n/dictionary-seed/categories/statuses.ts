@@ -1,0 +1,30 @@
+import { TermTuple } from '../types';
+
+/** Статусы объектов и процессов (namespace: dict.statuses) */
+export const statusesTerms: TermTuple[] = [
+  ['active', 'Активен', 'Active', 'Белсенді', 'Aktif', '活跃'],
+  ['draft', 'Черновик', 'Draft', 'Жоба', 'Taslak', '草稿'],
+  ['archived', 'Архив', 'Archived', 'Мұрағат', 'Arşivlendi', '已归档'],
+  ['inProgress', 'В работе', 'In progress', 'Жұмыста', 'Devam ediyor', '进行中'],
+  ['pending', 'Ожидает', 'Pending', 'Күтуде', 'Beklemede', '待处理'],
+  ['approved', 'Согласовано', 'Approved', 'Келісілген', 'Onaylandı', '已批准'],
+  ['rejected', 'Отклонено', 'Rejected', 'Қабылданбады', 'Reddedildi', '已拒绝'],
+  ['completed', 'Завершено', 'Completed', 'Аяқталды', 'Tamamlandı', '已完成'],
+  ['cancelled', 'Отменено', 'Cancelled', 'Болдырылмады', 'İptal edildi', '已取消'],
+  ['onHold', 'Приостановлено', 'On hold', 'Тоқтатылған', 'Beklemede', '已暂停'],
+  ['overdue', 'Просрочено', 'Overdue', 'Мерзімі өткен', 'Gecikmiş', '已逾期'],
+  ['new', 'Новый', 'New', 'Жаңа', 'Yeni', '新建'],
+  ['open', 'Открыт', 'Open', 'Ашық', 'Açık', '打开'],
+  ['closed', 'Закрыт', 'Closed', 'Жабық', 'Kapalı', '已关闭'],
+  ['underReview', 'На рассмотрении', 'Under review', 'Қарастырылуда', 'İncelemede', '审核中'],
+  ['expired', 'Истёк', 'Expired', 'Мерзімі аяқталды', 'Süresi doldu', '已过期'],
+  ['scheduled', 'Запланировано', 'Scheduled', 'Жоспарланған', 'Planlandı', '已计划'],
+  ['inspectionPassed', 'Проверка пройдена', 'Inspection passed', 'Тексеру өтті', 'Denetim geçti', '检查通过'],
+  ['inspectionFailed', 'Проверка не пройдена', 'Inspection failed', 'Тексеру өтпеді', 'Denetim başarısız', '检查未通过'],
+  ['underInvestigation', 'Расследуется', 'Under investigation', 'Тергеу жүргізілуде', 'Soruşturuluyor', '调查中'],
+  ['resolved', 'Урегулировано', 'Resolved', 'Шешілді', 'Çözüldü', '已解决'],
+  ['blocked', 'Заблокировано', 'Blocked', 'Бұғатталған', 'Engellendi', '已阻止'],
+  ['inactive', 'Неактивен', 'Inactive', 'Белсенді емес', 'Pasif', '未激活'],
+  ['verified', 'Проверено', 'Verified', 'Тексерілді', 'Doğrulandı', '已验证'],
+  ['unverified', 'Не проверено', 'Unverified', 'Тексерілмеген', 'Doğrulanmadı', '未验证'],
+];
