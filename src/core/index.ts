@@ -21,6 +21,7 @@
  *  - favorites          — избранное
  *  - recent-items       — последние открытые элементы
  *  - user-settings      — настройки пользователя
+ *  - language           — Language Engine (мультиязычность)
  */
 
 export * from './types';
@@ -39,3 +40,4 @@ export * from './global-filters';
 export * from './favorites';
 export * from './recent-items';
 export * from './user-settings';
+export * from './language';
