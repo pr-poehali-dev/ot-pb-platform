@@ -25,10 +25,19 @@ function termKey(namespace: string, localKey: string): string {
   return `${namespace}.${localKey}`;
 }
 
-/** Синхронизация одного термина во все локали существующего translationRegistry. */
+/**
+ * Синхронизация одного термина во все локали существующего translationRegistry.
+ *
+ * ВАЖНО: term.key имеет вид "<namespace>.<localKey>" (см. termKey ниже), а namespace
+ * сам может содержать точки (например "dict.app", "dict.orgStructure"). Поэтому
+ * восстанавливать localKey делением по ПЕРВОЙ точке нельзя — нужно отрезать ровно
+ * длину known namespace. Иначе (как было раньше) для "dict.app.hierarchyTitle"
+ * получался неверный localKey "app.hierarchyTitle", термин регистрировался под
+ * несуществующим ключом, translate() ничего не находил и в UI утекал сырой
+ * технический ключ вида "dict.app:hierarchyTitle".
+ */
 function syncToRegistry(term: TranslationTerm): void {
-  const [, ...localKeyParts] = term.key.split('.');
-  const localKey = localKeyParts.join('.');
+  const localKey = term.key.slice(term.namespace.length + 1);
   Object.entries(term.translations).forEach(([locale, value]) => {
     if (!value) return;
     translationRegistry.extendLocale(term.namespace, locale, { [localKey]: value });

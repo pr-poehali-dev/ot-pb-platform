@@ -8,7 +8,8 @@ import { LocaleCode, LocaleMeta } from './types';
  * без изменения существующего кода платформы.
  */
 export const DEFAULT_LOCALE: LocaleCode = 'ru';
-export const FALLBACK_LOCALE: LocaleCode = 'en';
+/** Если перевод отсутствует в активной локали — показываем русский (требование платформы). */
+export const FALLBACK_LOCALE: LocaleCode = 'ru';
 
 const FIRST_STAGE_LOCALES: LocaleMeta[] = [
   { code: 'ru', label: 'Russian', nativeLabel: 'Русский', direction: 'ltr' },

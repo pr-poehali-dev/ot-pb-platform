@@ -58,7 +58,29 @@ function interpolate(template: string, params?: Record<string, string | number>)
   );
 }
 
-/** Разрешение перевода: активная локаль → fallback-локаль → явный fallback → сам ключ. */
+/**
+ * Последний защитный барьер: пользователь НИКОГДА не должен видеть технический
+ * ключ вида "dict.app:hierarchyTitle" или "modules:users.title". Если перевод
+ * не найден ни в активной, ни в fallback-локали, и явного fallback-текста нет,
+ * превращаем ключ в читаемый текст (берём последний сегмент, разбиваем camelCase
+ * на слова, убираем расширения файлов вида ".tsx") вместо показа сырого ключа.
+ */
+function humanizeKey(key: TranslationKey): string {
+  const withoutExtension = key.replace(/\.(tsx?|jsx?)$/i, '');
+  const lastSegment = withoutExtension.split(/[:.]/).pop() ?? withoutExtension;
+  const spaced = lastSegment
+    .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+    .replace(/[_-]+/g, ' ')
+    .trim();
+  if (!spaced) return withoutExtension;
+  return spaced.charAt(0).toUpperCase() + spaced.slice(1);
+}
+
+/**
+ * Разрешение перевода: активная локаль → fallback-локаль (русский) → явный
+ * fallback из вызова → человекочитаемое представление ключа. Технический ключ
+ * с разделителями "namespace:key" или точками наружу никогда не возвращается.
+ */
 function translate(key: TranslationKey, options?: TranslateOptions): string {
   const { namespace, localKey } = parseKey(key);
   const activeLocale = getActiveLocale();
@@ -75,7 +97,9 @@ function translate(key: TranslationKey, options?: TranslateOptions): string {
 
   if (options?.fallback) return interpolate(options.fallback, options.params);
 
-  return key;
+  eventBus.emit('language.translation_missing', { key, namespace, localKey, activeLocale }, 'language-engine');
+
+  return humanizeKey(key);
 }
 
 export const languageService = {
