@@ -2,14 +2,18 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import Icon from '@/components/ui/icon';
+import { useTranslate } from '@/core';
 import { statusTone } from '@/data/entities';
 import { useEntityStore } from '@/context/EntityStoreContext';
+import { ENTITY_STATUS_KEY } from '@/i18n/statusKeys';
+import { levelLabelKey, levelChildLabelKey } from '@/i18n/levelKeys';
 import EntityFormDialog from '@/components/entity/EntityFormDialog';
 import EntityStatusDialog from '@/components/entity/EntityStatusDialog';
 
 const EntityCard = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslate();
   const { getNode, getChildren, getMeta, getPath } = useEntityStore();
 
   const node = id ? getNode(id) : undefined;
@@ -23,13 +27,13 @@ const EntityCard = () => {
       <div className="grid min-h-screen place-items-center grid-bg text-foreground">
         <div className="text-center">
           <Icon name="FileSearch" size={32} className="mx-auto mb-3 text-muted-foreground" />
-          <p className="mb-4 text-sm text-muted-foreground">Сущность не найдена</p>
+          <p className="mb-4 text-sm text-muted-foreground">{t('dict.app:entityCardNotFound')}</p>
           <button
             onClick={() => navigate('/entity-links')}
             className="inline-flex items-center gap-1.5 rounded-lg border border-border px-4 py-2 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
           >
             <Icon name="ArrowLeft" size={14} />
-            К связям сущностей
+            {t('dict.app:entityCardBackToLinks')}
           </button>
         </div>
       </div>
@@ -43,6 +47,7 @@ const EntityCard = () => {
   const path = getPath(node.id);
   const isArchived = node.status === 'Архив';
   const history = [...(node.history ?? [])].reverse();
+  const childLabelKey = levelChildLabelKey(node.level);
 
   return (
     <div className="min-h-screen grid-bg text-foreground">
@@ -56,7 +61,7 @@ const EntityCard = () => {
             className="inline-flex items-center gap-1.5 rounded-lg border border-border glass px-3 py-1.5 transition-colors hover:border-primary/40 hover:text-primary"
           >
             <Icon name="ArrowLeft" size={14} />
-            Связи сущностей
+            {t('dict.menu:entityLinks')}
           </button>
         </div>
 
@@ -79,7 +84,7 @@ const EntityCard = () => {
               </div>
               <div>
                 <div className="mb-1 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.15em] text-accent">
-                  {meta.label}
+                  {t(levelLabelKey(node.level))}
                 </div>
                 <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">{node.name}</h1>
                 <span className="font-mono text-xs text-muted-foreground">{node.code}</span>
@@ -88,13 +93,13 @@ const EntityCard = () => {
             <div className="flex items-center gap-2">
               {node.status && (
                 <span className={`rounded-full border px-3 py-1 font-mono text-[11px] ${statusTone[node.status]}`}>
-                  {node.status}
+                  {t(`dict.statuses:${ENTITY_STATUS_KEY[node.status]}`)}
                 </span>
               )}
               <button
                 onClick={() => setFormOpen(true)}
                 className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-accent/40 hover:text-accent"
-                title="Редактировать"
+                title={t('dict.buttons:edit')}
               >
                 <Icon name="Pencil" size={16} />
               </button>
@@ -105,7 +110,7 @@ const EntityCard = () => {
                     setStatusOpen(true);
                   }}
                   className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
-                  title="Восстановить"
+                  title={t('dict.buttons:restore')}
                 >
                   <Icon name="RotateCcw" size={16} />
                 </button>
@@ -116,7 +121,7 @@ const EntityCard = () => {
                     setStatusOpen(true);
                   }}
                   className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-amber-400/50 hover:text-amber-400"
-                  title="Архивировать"
+                  title={t('dict.buttons:archive')}
                 >
                   <Icon name="Archive" size={16} />
                 </button>
@@ -130,43 +135,43 @@ const EntityCard = () => {
           <TabsList className="mb-6 h-auto flex-wrap gap-1 rounded-xl border border-border glass p-1.5">
             <TabsTrigger value="main" className="gap-1.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
               <Icon name="LayoutPanelLeft" size={15} />
-              Основное
+              {t('dict.app:entityCardTabMain')}
             </TabsTrigger>
             <TabsTrigger value="links" className="gap-1.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
               <Icon name="GitBranch" size={15} />
-              Связи
+              {t('dict.app:entityCardTabLinks')}
             </TabsTrigger>
             <TabsTrigger value="docs" className="gap-1.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
               <Icon name="FileText" size={15} />
-              Документы
+              {t('dict.app:entityCardTabDocs')}
             </TabsTrigger>
             <TabsTrigger value="history" className="gap-1.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
               <Icon name="History" size={15} />
-              История
+              {t('dict.app:entityCardTabHistory')}
             </TabsTrigger>
           </TabsList>
 
           {/* Основное */}
           <TabsContent value="main" className="space-y-4 mt-0">
             <div className="rounded-2xl border border-border glass p-6">
-              <h3 className="mb-4 font-display text-base font-semibold">Основная информация</h3>
+              <h3 className="mb-4 font-display text-base font-semibold">{t('dict.app:entityCardMainInfo')}</h3>
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Название" value={node.name} icon="Type" />
-                <Field label="Код" value={node.code} icon="Hash" mono />
-                <Field label="Статус" icon="CircleDot">
+                <Field label={t('dict.ui:name')} value={node.name} icon="Type" />
+                <Field label={t('dict.ui:code')} value={node.code} icon="Hash" mono />
+                <Field label={t('dict.ui:status')} icon="CircleDot">
                   {node.status && (
                     <span className={`rounded-full border px-2.5 py-0.5 font-mono text-[11px] ${statusTone[node.status]}`}>
-                      {node.status}
+                      {t(`dict.statuses:${ENTITY_STATUS_KEY[node.status]}`)}
                     </span>
                   )}
                 </Field>
-                <Field label="Ответственный" value={node.owner ?? '—'} icon="UserCircle2" />
-                <Field label="Дата создания" value={node.createdAt ?? '—'} icon="CalendarPlus" />
-                <Field label="Последнее изменение" value={node.updatedAt ?? '—'} icon="History" />
+                <Field label={t('dict.ui:owner')} value={node.owner ?? '—'} icon="UserCircle2" />
+                <Field label={t('dict.ui:createdAt')} value={node.createdAt ?? '—'} icon="CalendarPlus" />
+                <Field label={t('dict.app:entityCardLastModified')} value={node.updatedAt ?? '—'} icon="History" />
               </div>
               {node.description && (
                 <div className="mt-4 border-t border-border pt-4">
-                  <div className="mb-1.5 font-mono text-[11px] uppercase tracking-[0.15em] text-muted-foreground">Описание</div>
+                  <div className="mb-1.5 font-mono text-[11px] uppercase tracking-[0.15em] text-muted-foreground">{t('dict.ui:description')}</div>
                   <p className="text-sm text-foreground/90">{node.description}</p>
                 </div>
               )}
@@ -176,7 +181,7 @@ const EntityCard = () => {
           {/* Связи */}
           <TabsContent value="links" className="space-y-4 mt-0">
             <div className="rounded-2xl border border-border glass p-6">
-              <h3 className="mb-4 font-display text-base font-semibold">Родительская сущность</h3>
+              <h3 className="mb-4 font-display text-base font-semibold">{t('dict.dictionaries:parentEntity')}</h3>
               {parent ? (
                 <button
                   onClick={() => navigate(`/entity/${parent.id}`)}
@@ -186,14 +191,14 @@ const EntityCard = () => {
                     <Icon name={parentMeta!.icon} size={18} className="text-primary" />
                     <div>
                       <div className="text-sm font-medium">{parent.name}</div>
-                      <div className="font-mono text-[11px] text-muted-foreground">{parentMeta!.label}</div>
+                      <div className="font-mono text-[11px] text-muted-foreground">{t(levelLabelKey(parent.level))}</div>
                     </div>
                   </div>
                   <Icon name="ExternalLink" size={15} className="text-muted-foreground" />
                 </button>
               ) : (
                 <div className="rounded-xl border border-dashed border-border px-4 py-3 text-sm italic text-muted-foreground">
-                  Корневая сущность — родителя нет
+                  {t('dict.app:rootEntityNoParent')}
                 </div>
               )}
             </div>
@@ -201,7 +206,7 @@ const EntityCard = () => {
             <div className="rounded-2xl border border-border glass p-6">
               <div className="mb-4 flex items-center justify-between">
                 <h3 className="font-display text-base font-semibold">
-                  Дочерние сущности {meta.childLabel && <span className="text-muted-foreground font-normal">· {meta.childLabel}</span>}
+                  {t('dict.app:entityCardChildEntities')} {childLabelKey && <span className="text-muted-foreground font-normal">· {t(childLabelKey)}</span>}
                 </h3>
                 <span className="rounded-full border border-border bg-secondary/60 px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
                   {children.length}
@@ -228,13 +233,13 @@ const EntityCard = () => {
                 </div>
               ) : (
                 <div className="rounded-xl border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
-                  Дочерние сущности отсутствуют
+                  {t('dict.app:entityCardChildEntitiesNone')}
                 </div>
               )}
             </div>
 
             <div className="rounded-2xl border border-border glass p-6">
-              <h3 className="mb-4 font-display text-base font-semibold">Связанные пользователи</h3>
+              <h3 className="mb-4 font-display text-base font-semibold">{t('dict.app:entityCardRelatedUsers')}</h3>
               {node.relatedUsers && node.relatedUsers.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {node.relatedUsers.map((u) => (
@@ -248,7 +253,7 @@ const EntityCard = () => {
                 </div>
               ) : (
                 <div className="rounded-xl border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
-                  Связанные пользователи отсутствуют
+                  {t('dict.app:entityCardRelatedUsersNone')}
                 </div>
               )}
             </div>
@@ -258,10 +263,10 @@ const EntityCard = () => {
           <TabsContent value="docs" className="mt-0">
             <div className="rounded-2xl border border-border glass p-6">
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-display text-base font-semibold">Связанные документы</h3>
+                <h3 className="font-display text-base font-semibold">{t('dict.app:entityCardRelatedDocs')}</h3>
                 <button className="inline-flex items-center gap-2 rounded-lg bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20">
                   <Icon name="Upload" size={15} />
-                  Загрузить документ
+                  {t('dict.app:entityCardUploadDoc')}
                 </button>
               </div>
               {node.documents && node.documents.length > 0 ? (
@@ -290,7 +295,7 @@ const EntityCard = () => {
                 </div>
               ) : (
                 <div className="rounded-xl border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
-                  Документы ещё не добавлены
+                  {t('dict.app:entityCardNoDocsYet')}
                 </div>
               )}
             </div>
@@ -299,7 +304,7 @@ const EntityCard = () => {
           {/* История */}
           <TabsContent value="history" className="mt-0">
             <div className="rounded-2xl border border-border glass p-6">
-              <h3 className="mb-4 font-display text-base font-semibold">История изменений</h3>
+              <h3 className="mb-4 font-display text-base font-semibold">{t('dict.app:entityCardChangeHistory')}</h3>
               {history.length > 0 ? (
                 <div className="relative space-y-5 pl-6">
                   <div className="absolute left-[7px] top-1 bottom-1 w-px bg-border" />
@@ -321,7 +326,7 @@ const EntityCard = () => {
                 </div>
               ) : (
                 <div className="rounded-xl border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground">
-                  История изменений пуста
+                  {t('dict.app:entityCardHistoryEmpty')}
                 </div>
               )}
             </div>
@@ -329,8 +334,8 @@ const EntityCard = () => {
         </Tabs>
 
         <footer className="mt-10 flex items-center justify-between border-t border-border pt-6 font-mono text-[11px] text-muted-foreground">
-          <span>Noventra Core · Карточка сущности</span>
-          <span>{meta.label}</span>
+          <span>{t('common:brand.name')} {t('common:brand.suffix')} · {t('dict.app:entityCardFooterLabel')}</span>
+          <span>{t(levelLabelKey(node.level))}</span>
         </footer>
       </main>
 

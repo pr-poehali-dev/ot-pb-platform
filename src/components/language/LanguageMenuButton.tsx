@@ -1,5 +1,5 @@
 import Icon from '@/components/ui/icon';
-import { useLocale } from '@/core';
+import { useLocale, useTranslate } from '@/core';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -16,6 +16,7 @@ import {
  */
 const LanguageMenuButton = () => {
   const { locale, setLocale, availableLocales } = useLocale();
+  const { t } = useTranslate();
   const activeMeta = availableLocales.find((l) => l.code === locale);
 
   return (
@@ -29,7 +30,7 @@ const LanguageMenuButton = () => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuLabel>Language</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('dict.app:languageMenuLabel')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {availableLocales.map((l) => (
           <DropdownMenuItem

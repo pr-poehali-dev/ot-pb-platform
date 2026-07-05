@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
+import { useTranslate } from '@/core';
 import { statusTone, LevelId, Node } from '@/data/entities';
 import { useEntityStore } from '@/context/EntityStoreContext';
+import { ENTITY_STATUS_KEY } from '@/i18n/statusKeys';
+import { levelLabelKey, levelChildLabelKey } from '@/i18n/levelKeys';
 import EntityActionsMenu from '@/components/entity/EntityActionsMenu';
 import EntityFormDialog from '@/components/entity/EntityFormDialog';
 import EntityStatusDialog from '@/components/entity/EntityStatusDialog';
@@ -10,6 +13,7 @@ import EntityHistoryDialog from '@/components/entity/EntityHistoryDialog';
 
 const EntityLinks = () => {
   const navigate = useNavigate();
+  const { t } = useTranslate();
   const { getNode, getChildren, getMeta, getPath } = useEntityStore();
   const [selectedId, setSelectedId] = useState('root');
 
@@ -80,6 +84,7 @@ const EntityLinks = () => {
   };
 
   const formMeta = getMeta(formLevel);
+  const childLabelKey = levelChildLabelKey(node.level);
 
   return (
     <div className="min-h-screen grid-bg text-foreground">
@@ -93,7 +98,7 @@ const EntityLinks = () => {
             className="inline-flex items-center gap-1.5 rounded-lg border border-border glass px-3 py-1.5 transition-colors hover:border-primary/40 hover:text-primary"
           >
             <Icon name="ArrowLeft" size={14} />
-            Noventra Core
+            {t('common:brand.name')} {t('common:brand.suffix')}
           </button>
         </div>
 
@@ -101,13 +106,13 @@ const EntityLinks = () => {
         <header className="mb-6">
           <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.15em] text-accent">
             <Icon name="GitBranch" size={13} />
-            Entity Links
+            {t('dict.app:entityLinksBadge')}
           </div>
           <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Связи <span className="text-primary text-glow">сущностей</span>
+            {t('dict.app:entityLinksTitle')} <span className="text-primary text-glow">{t('dict.app:entityLinksTitleHighlight')}</span>
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Навигация по утверждённой иерархии Noventra: от организации (tenant) до конечного пользователя.
+            {t('dict.app:entityLinksSubtitle')}
           </p>
         </header>
 
@@ -136,7 +141,7 @@ const EntityLinks = () => {
                 <Icon name={meta.icon} size={26} className="text-primary" />
               </div>
               <div>
-                <div className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted-foreground">{meta.label}</div>
+                <div className="font-mono text-[11px] uppercase tracking-[0.15em] text-muted-foreground">{t(levelLabelKey(node.level))}</div>
                 <h2 className="font-display text-xl font-semibold">{node.name}</h2>
                 <div className="mt-1 flex items-center gap-3 font-mono text-xs text-muted-foreground">
                   <span>{node.code}</span>
@@ -156,7 +161,7 @@ const EntityLinks = () => {
             <div className="flex items-center gap-2">
               {node.status && (
                 <span className={`rounded-full border px-3 py-1 font-mono text-[11px] ${statusTone[node.status]}`}>
-                  {node.status}
+                  {t(`dict.statuses:${ENTITY_STATUS_KEY[node.status]}`)}
                 </span>
               )}
               {node.level !== 'root' && (
@@ -166,7 +171,7 @@ const EntityLinks = () => {
                     className="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
                   >
                     <Icon name="IdCard" size={14} />
-                    Открыть карточку
+                    {t('dict.app:entityLinksOpenCard')}
                   </button>
                   <EntityActionsMenu
                     entity={node}
@@ -182,14 +187,14 @@ const EntityLinks = () => {
 
           {/* Parent link */}
           <div className="mt-5 border-t border-border pt-4">
-            <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.15em] text-muted-foreground">Родительская сущность</div>
+            <div className="mb-2 font-mono text-[11px] uppercase tracking-[0.15em] text-muted-foreground">{t('dict.dictionaries:parentEntity')}</div>
             {parent ? (
               <div className="flex items-center justify-between gap-3 rounded-xl border border-border bg-secondary/40 px-4 py-3">
                 <div className="flex items-center gap-3">
                   <Icon name={parentMeta!.icon} size={18} className="text-primary" />
                   <div>
                     <div className="text-sm font-medium">{parent.name}</div>
-                    <div className="font-mono text-[11px] text-muted-foreground">{parentMeta!.label}</div>
+                    <div className="font-mono text-[11px] text-muted-foreground">{t(levelLabelKey(parent.level))}</div>
                   </div>
                 </div>
                 <button
@@ -197,12 +202,12 @@ const EntityLinks = () => {
                   className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
                 >
                   <Icon name="ExternalLink" size={14} />
-                  Открыть
+                  {t('common:buttons.open')}
                 </button>
               </div>
             ) : (
               <div className="rounded-xl border border-dashed border-border px-4 py-3 text-sm italic text-muted-foreground">
-                Корневая сущность — родителя нет
+                {t('dict.app:rootEntityNoParent')}
               </div>
             )}
           </div>
@@ -212,7 +217,9 @@ const EntityLinks = () => {
         <section>
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <h3 className="font-display text-xl font-semibold">{meta.childLabel ?? 'Дочерние сущности'}</h3>
+              <h3 className="font-display text-xl font-semibold">
+                {childLabelKey ? t(childLabelKey) : t('dict.app:childEntitiesDefault')}
+              </h3>
               <span className="rounded-full border border-border bg-secondary/60 px-2.5 py-1 font-mono text-[11px] text-muted-foreground">
                 {children.length}
               </span>
@@ -223,7 +230,7 @@ const EntityLinks = () => {
                 className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:glow"
               >
                 <Icon name="Plus" size={16} />
-                Добавить дочерний элемент
+                {t('dict.app:entityLinksAddChild')}
               </button>
             )}
           </div>
@@ -233,6 +240,7 @@ const EntityLinks = () => {
               {children.map((child, i) => {
                 const childMeta = getMeta(child.level);
                 const childChildrenCount = getChildren(child.id).length;
+                const childChildLabelKey = levelChildLabelKey(child.level);
                 return (
                   <div
                     key={child.id}
@@ -253,15 +261,15 @@ const EntityLinks = () => {
                       </div>
                       {child.status && (
                         <span className={`shrink-0 rounded-full border px-2 py-0.5 font-mono text-[10px] ${statusTone[child.status]}`}>
-                          {child.status}
+                          {t(`dict.statuses:${ENTITY_STATUS_KEY[child.status]}`)}
                         </span>
                       )}
                     </div>
 
-                    {childMeta.childLabel && (
+                    {childChildLabelKey && (
                       <div className="mb-4 flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
                         <Icon name="CornerDownRight" size={13} />
-                        {childChildrenCount} {childMeta.childLabel.toLowerCase()}
+                        {childChildrenCount} {t(childChildLabelKey).toLowerCase()}
                       </div>
                     )}
 
@@ -271,12 +279,12 @@ const EntityLinks = () => {
                         className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
                       >
                         <Icon name="ExternalLink" size={15} />
-                        Открыть
+                        {t('common:buttons.open')}
                       </button>
                       <button
                         onClick={() => navigate(`/entity/${child.id}`)}
                         className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-accent/40 hover:text-accent"
-                        title="Открыть карточку"
+                        title={t('dict.app:entityLinksOpenCard')}
                       >
                         <Icon name="IdCard" size={16} />
                       </button>
@@ -296,15 +304,15 @@ const EntityLinks = () => {
             <div className="grid place-items-center rounded-2xl border border-dashed border-border py-14 text-center">
               <Icon name="FolderOpen" size={30} className="mb-3 text-muted-foreground" />
               <p className="text-sm text-muted-foreground">
-                {meta.childLabel ? 'Дочерние сущности ещё не добавлены' : 'У пользователя нет дочерних сущностей'}
+                {meta.childLabel ? t('dict.app:childEntitiesNotAdded') : t('dict.app:noChildEntitiesForUser')}
               </p>
             </div>
           )}
         </section>
 
         <footer className="mt-14 flex items-center justify-between border-t border-border pt-6 font-mono text-[11px] text-muted-foreground">
-          <span>Noventra Core · Связи сущностей</span>
-          <span>Уровень: {meta.label}</span>
+          <span>{t('common:brand.name')} {t('common:brand.suffix')} · {t('dict.menu:entityLinks')}</span>
+          <span>{t('dict.app:entityLinksFooterLevel', { params: { level: t(levelLabelKey(node.level)) } })}</span>
         </footer>
       </main>
 

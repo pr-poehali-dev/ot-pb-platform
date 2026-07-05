@@ -8,6 +8,7 @@ import {
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
 import Icon from '@/components/ui/icon';
+import { useTranslate } from '@/core';
 import { Node } from '@/data/entities';
 import { useToast } from '@/hooks/use-toast';
 import { useEntityStore } from '@/context/EntityStoreContext';
@@ -22,6 +23,7 @@ interface EntityStatusDialogProps {
 const EntityStatusDialog = ({ open, onOpenChange, action, entity }: EntityStatusDialogProps) => {
   const { archiveEntity, restoreEntity } = useEntityStore();
   const { toast } = useToast();
+  const { t } = useTranslate();
 
   if (!entity) return null;
 
@@ -30,10 +32,16 @@ const EntityStatusDialog = ({ open, onOpenChange, action, entity }: EntityStatus
   const handleConfirm = () => {
     if (isArchive) {
       archiveEntity(entity.id);
-      toast({ title: 'Сущность архивирована', description: `«${entity.name}» переведена в статус «Архив»` });
+      toast({
+        title: t('dict.app:entityStatusToastArchivedTitle'),
+        description: t('dict.app:entityStatusToastArchivedDesc', { params: { name: entity.name } }),
+      });
     } else {
       restoreEntity(entity.id);
-      toast({ title: 'Сущность восстановлена', description: `«${entity.name}» переведена в статус «Активен»` });
+      toast({
+        title: t('dict.app:entityStatusToastRestoredTitle'),
+        description: t('dict.app:entityStatusToastRestoredDesc', { params: { name: entity.name } }),
+      });
     }
     onOpenChange(false);
   };
@@ -47,17 +55,17 @@ const EntityStatusDialog = ({ open, onOpenChange, action, entity }: EntityStatus
               <Icon name={isArchive ? 'Archive' : 'RotateCcw'} size={16} className={isArchive ? 'text-amber-400' : 'text-primary'} />
             </div>
             <AlertDialogTitle className="font-display">
-              {isArchive ? 'Архивировать сущность?' : 'Восстановить сущность?'}
+              {isArchive ? t('dict.app:entityStatusArchiveTitle') : t('dict.app:entityStatusRestoreTitle')}
             </AlertDialogTitle>
           </div>
           <AlertDialogDescription>
             {isArchive
-              ? `«${entity.name}» получит статус «Архив». Данные сохраняются, физическое удаление не выполняется.`
-              : `«${entity.name}» получит статус «Активен» и вернётся в рабочий контур.`}
+              ? t('dict.app:entityStatusArchiveDesc', { params: { name: entity.name } })
+              : t('dict.app:entityStatusRestoreDesc', { params: { name: entity.name } })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Отмена</AlertDialogCancel>
+          <AlertDialogCancel>{t('dict.buttons:cancel')}</AlertDialogCancel>
           <button
             onClick={handleConfirm}
             className={`inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
@@ -67,7 +75,7 @@ const EntityStatusDialog = ({ open, onOpenChange, action, entity }: EntityStatus
             }`}
           >
             <Icon name={isArchive ? 'Archive' : 'RotateCcw'} size={15} />
-            {isArchive ? 'Архивировать' : 'Восстановить'}
+            {isArchive ? t('dict.buttons:archive') : t('dict.buttons:restore')}
           </button>
         </AlertDialogFooter>
       </AlertDialogContent>

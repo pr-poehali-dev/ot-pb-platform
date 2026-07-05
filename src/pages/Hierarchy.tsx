@@ -1,8 +1,11 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
+import { useTranslate } from '@/core';
 import { useEntityStore } from '@/context/EntityStoreContext';
 import { LEVELS_META, LevelId, Node, statusTone } from '@/data/entities';
+import { ENTITY_STATUS_KEY } from '@/i18n/statusKeys';
+import { levelLabelKey } from '@/i18n/levelKeys';
 import EntityActionsMenu from '@/components/entity/EntityActionsMenu';
 import EntityFormDialog from '@/components/entity/EntityFormDialog';
 import EntityStatusDialog from '@/components/entity/EntityStatusDialog';
@@ -12,6 +15,7 @@ const DISPLAY_LEVELS = LEVELS_META.filter((l) => l.id !== 'root');
 
 const Hierarchy = () => {
   const navigate = useNavigate();
+  const { t } = useTranslate();
   const { nodes, getPath } = useEntityStore();
   const [activeLevel, setActiveLevel] = useState<LevelId>(DISPLAY_LEVELS[0].id);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -84,23 +88,23 @@ const Hierarchy = () => {
             className="inline-flex items-center gap-1.5 rounded-lg border border-border glass px-3 py-1.5 transition-colors hover:border-primary/40 hover:text-primary"
           >
             <Icon name="ArrowLeft" size={14} />
-            Noventra Core
+            {t('common:brand.name')} {t('common:brand.suffix')}
           </button>
           <Icon name="ChevronRight" size={14} />
-          <span className="text-foreground">Иерархия данных</span>
+          <span className="text-foreground">{t('dict.menu:hierarchy')}</span>
         </div>
 
         {/* Header */}
         <header className="mb-8">
           <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.15em] text-accent">
             <Icon name="Workflow" size={13} />
-            Data Hierarchy
+            {t('dict.app:hierarchyBadge')}
           </div>
           <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">
-            Иерархия <span className="text-primary text-glow">данных</span>
+            {t('dict.app:hierarchyTitle')} <span className="text-primary text-glow">{t('dict.app:hierarchyTitleHighlight')}</span>
           </h1>
           <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-            Сквозная структура сущностей платформы: от организации (tenant) до конечного пользователя на площадке.
+            {t('dict.app:hierarchySubtitle')}
           </p>
         </header>
 
@@ -118,7 +122,7 @@ const Hierarchy = () => {
                   }`}
                 >
                   <Icon name={lvl.icon} size={16} className={activeLevel === lvl.id ? 'text-primary' : ''} />
-                  <span className="whitespace-nowrap">{lvl.label}</span>
+                  <span className="whitespace-nowrap">{t(levelLabelKey(lvl.id))}</span>
                 </button>
                 {i < DISPLAY_LEVELS.length - 1 && <Icon name="ChevronRight" size={16} className="shrink-0 text-border" />}
               </div>
@@ -139,9 +143,9 @@ const Hierarchy = () => {
                     </div>
                     <div>
                       <div className="flex items-center gap-2 font-mono text-[11px] text-muted-foreground">
-                        Уровень {levelIdx + 1} из {DISPLAY_LEVELS.length}
+                        {t('dict.app:hierarchyLevelOfTotal', { params: { level: levelIdx + 1, total: DISPLAY_LEVELS.length } })}
                       </div>
-                      <h2 className="font-display text-xl font-semibold">{lvl.label}</h2>
+                      <h2 className="font-display text-xl font-semibold">{t(levelLabelKey(lvl.id))}</h2>
                     </div>
                   </div>
                   <button
@@ -149,7 +153,7 @@ const Hierarchy = () => {
                     className="inline-flex items-center gap-2 rounded-xl bg-primary/10 px-4 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
                   >
                     <Icon name="Plus" size={16} />
-                    Создать
+                    {t('dict.buttons:create')}
                   </button>
                 </div>
 
@@ -173,7 +177,7 @@ const Hierarchy = () => {
                           <div className="flex shrink-0 items-center gap-2">
                             {item.status && (
                               <span className={`rounded-full border px-2.5 py-1 font-mono text-[11px] ${statusTone[item.status]}`}>
-                                {item.status}
+                                {t(`dict.statuses:${ENTITY_STATUS_KEY[item.status]}`)}
                               </span>
                             )}
                           </div>
@@ -183,7 +187,7 @@ const Hierarchy = () => {
                           <div className="flex items-center gap-2 text-muted-foreground">
                             <Icon name="CornerLeftUp" size={14} className="shrink-0" />
                             <span className="truncate">
-                              {parent ? parent.name : <span className="italic text-border">Корневая сущность</span>}
+                              {parent ? parent.name : <span className="italic text-border">{t('dict.app:rootEntity')}</span>}
                             </span>
                           </div>
                           <div className="flex items-center gap-2 text-muted-foreground">
@@ -202,12 +206,12 @@ const Hierarchy = () => {
                             className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
                           >
                             <Icon name="ExternalLink" size={15} />
-                            Открыть
+                            {t('common:buttons.open')}
                           </button>
                           <button
                             onClick={() => openEdit(item)}
                             className="grid h-9 w-9 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-accent/40 hover:text-accent"
-                            title="Редактировать"
+                            title={t('dict.buttons:edit')}
                           >
                             <Icon name="Pencil" size={16} />
                           </button>
@@ -229,7 +233,7 @@ const Hierarchy = () => {
                   >
                     <div className="flex flex-col items-center gap-2">
                       <Icon name="Plus" size={22} />
-                      <span className="text-sm">Добавить: {lvl.label.toLowerCase()}</span>
+                      <span className="text-sm">{t('dict.app:hierarchyAddChild', { params: { level: t(levelLabelKey(lvl.id)).toLowerCase() } })}</span>
                     </div>
                   </button>
                 </div>
@@ -239,8 +243,8 @@ const Hierarchy = () => {
         </div>
 
         <footer className="mt-14 flex items-center justify-between border-t border-border pt-6 font-mono text-[11px] text-muted-foreground">
-          <span>Noventra Core · Иерархия данных</span>
-          <span>8 уровней структуры</span>
+          <span>{t('common:brand.name')} {t('common:brand.suffix')} · {t('dict.menu:hierarchy')}</span>
+          <span>{t('dict.app:hierarchyFooterLevelsCount', { params: { count: 8 } })}</span>
         </footer>
       </main>
 

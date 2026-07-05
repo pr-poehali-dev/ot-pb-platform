@@ -32,6 +32,9 @@ import { permitsTerms } from './categories/permits';
 import { generalTerms } from './categories/general';
 import { riskManagementTerms } from './categories/riskManagement';
 import { qualityManagementTerms } from './categories/qualityManagement';
+import { appTexts } from './categories/appTexts';
+import { hierarchyLevelsTerms } from './categories/hierarchyLevels';
+import { dictionaryCategoriesTerms } from './categories/dictionaryCategories';
 
 /**
  * Базовый словарь Translation Management — центрального словаря переводов
@@ -82,6 +85,9 @@ export function seedTranslationDictionary(): void {
     ...buildTerms('dict.general', generalTerms),
     ...buildTerms('dict.riskManagement', riskManagementTerms),
     ...buildTerms('dict.quality', qualityManagementTerms),
+    ...buildTerms('dict.app', appTexts),
+    ...buildTerms('dict.levels', hierarchyLevelsTerms),
+    ...buildTerms('dict.dictCategories', dictionaryCategoriesTerms),
   ]);
 }
 
@@ -118,6 +124,9 @@ export const DICTIONARY_CATEGORY_COUNTS: Record<string, number> = {
   'dict.general': generalTerms.length,
   'dict.riskManagement': riskManagementTerms.length,
   'dict.quality': qualityManagementTerms.length,
+  'dict.app': appTexts.length,
+  'dict.levels': hierarchyLevelsTerms.length,
+  'dict.dictCategories': dictionaryCategoriesTerms.length,
 };
 
 export const TOTAL_DICTIONARY_TERMS = Object.values(DICTIONARY_CATEGORY_COUNTS).reduce((sum, n) => sum + n, 0);

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { DictionaryConfig, DictionaryItem } from '@/data/dictionaries';
 import { useDictionaryStore } from '@/context/DictionaryStoreContext';
+import { useTranslate } from '@/core';
 import DictionaryTable from './DictionaryTable';
 import DictionaryFormDialog from './DictionaryFormDialog';
 import DictionaryViewDialog from './DictionaryViewDialog';
@@ -18,6 +19,7 @@ interface DictionaryCrudProps {
  */
 const DictionaryCrud = ({ config }: DictionaryCrudProps) => {
   const { getItems } = useDictionaryStore();
+  const { t } = useTranslate();
   const items = getItems(config.id);
 
   const [formOpen, setFormOpen] = useState(false);
@@ -74,7 +76,7 @@ const DictionaryCrud = ({ config }: DictionaryCrudProps) => {
           className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:glow"
         >
           <Icon name="Plus" size={16} />
-          Создать запись
+          {t('dict.app:dictCrudCreateRecord')}
         </button>
       </div>
 

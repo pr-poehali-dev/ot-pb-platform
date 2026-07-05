@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import Icon from '@/components/ui/icon';
+import { useTranslate } from '@/core';
 import { CATEGORIES, DICTIONARIES, DictionaryCategory } from '@/data/dictionaries';
 import { useDictionaryStore } from '@/context/DictionaryStoreContext';
 
@@ -12,6 +13,7 @@ interface DictionaryTreeProps {
 
 const DictionaryTree = ({ activeId, favorites, onToggleFavorite, onSelect }: DictionaryTreeProps) => {
   const { getItems } = useDictionaryStore();
+  const { t } = useTranslate();
   const [query, setQuery] = useState('');
   const [collapsed, setCollapsed] = useState<Record<DictionaryCategory, boolean>>({
     structure: false,
@@ -40,7 +42,7 @@ const DictionaryTree = ({ activeId, favorites, onToggleFavorite, onSelect }: Dic
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Поиск справочника…"
+            placeholder={t('dict.app:dictTreeSearchPlaceholder')}
             className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
           {query && (
@@ -73,7 +75,7 @@ const DictionaryTree = ({ activeId, favorites, onToggleFavorite, onSelect }: Dic
                 />
                 <Icon name={cat.icon} size={14} className="shrink-0 text-accent" />
                 <span className="min-w-0 flex-1 truncate font-mono text-[11px] uppercase tracking-wide text-muted-foreground">
-                  {cat.label}
+                  {t(`dict.dictCategories:${cat.id}`)}
                 </span>
                 <span className="shrink-0 font-mono text-[10px] text-muted-foreground/70">{items.length}</span>
               </button>
@@ -105,7 +107,7 @@ const DictionaryTree = ({ activeId, favorites, onToggleFavorite, onSelect }: Dic
                         <button
                           onClick={() => onToggleFavorite(d.id)}
                           className={`shrink-0 opacity-0 transition-opacity group-hover:opacity-100 ${isFav ? '!opacity-100 text-amber-400' : 'text-muted-foreground'}`}
-                          title={isFav ? 'Убрать из избранного' : 'Добавить в избранное'}
+                          title={isFav ? t('dict.app:dictHubRemoveFavorite') : t('dict.app:dictHubAddFavorite')}
                         >
                           <Icon name="Star" size={13} className={isFav ? 'fill-amber-400' : ''} />
                         </button>

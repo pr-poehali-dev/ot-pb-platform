@@ -6,6 +6,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
+import { useTranslate } from '@/core';
 import { Node } from '@/data/entities';
 
 interface EntityHistoryDialogProps {
@@ -15,6 +16,7 @@ interface EntityHistoryDialogProps {
 }
 
 const EntityHistoryDialog = ({ open, onOpenChange, entity }: EntityHistoryDialogProps) => {
+  const { t } = useTranslate();
   if (!entity) return null;
 
   const history = [...(entity.history ?? [])].reverse();
@@ -27,7 +29,7 @@ const EntityHistoryDialog = ({ open, onOpenChange, entity }: EntityHistoryDialog
             <div className="grid h-9 w-9 place-items-center rounded-lg bg-accent/10">
               <Icon name="History" size={16} className="text-accent" />
             </div>
-            <DialogTitle className="font-display">История изменений</DialogTitle>
+            <DialogTitle className="font-display">{t('dict.app:historyAction')}</DialogTitle>
           </div>
           <DialogDescription>{entity.name} · {entity.code}</DialogDescription>
         </DialogHeader>
@@ -54,7 +56,7 @@ const EntityHistoryDialog = ({ open, onOpenChange, entity }: EntityHistoryDialog
             </div>
           ) : (
             <div className="rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
-              История изменений пуста
+              {t('dict.app:entityHistoryDialogEmpty')}
             </div>
           )}
         </div>

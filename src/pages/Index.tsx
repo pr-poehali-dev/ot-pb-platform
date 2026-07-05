@@ -140,10 +140,10 @@ const Index = () => {
           {/* Stats */}
           <section className="mb-10 grid grid-cols-2 gap-4 lg:grid-cols-4">
             {[
-              { label: 'Активных модулей', value: '13', icon: 'Component', hint: 'ядро + подсистемы' },
-              { label: 'Пользователей', value: '1 248', icon: 'Users', hint: '+38 за неделю' },
-              { label: 'Объектов под контролем', value: '370', icon: 'Boxes', hint: 'объекты + площадки' },
-              { label: 'Событий в журнале', value: '24.6k', icon: 'Activity', hint: 'за 30 дней' },
+              { label: t('dict.app:indexStatActiveModules'), value: '13', icon: 'Component', hint: t('dict.app:indexHintCore') },
+              { label: t('dict.app:indexStatUsers'), value: '1 248', icon: 'Users', hint: t('dict.app:indexHintUsers') },
+              { label: t('dict.app:indexStatObjects'), value: '370', icon: 'Boxes', hint: t('dict.app:indexHintObjects') },
+              { label: t('dict.app:indexStatEvents'), value: '24.6k', icon: 'Activity', hint: t('dict.app:indexHintEvents') },
             ].map((s, i) => (
               <div
                 key={s.label}
@@ -208,7 +208,14 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">{t('modules:bus.desc')}</p>
               </div>
               <div className="flex flex-wrap gap-2">
-                {['Инструктажи', 'СИЗ', 'Проверки', 'Инциденты', 'Обучение', '+ ещё'].map((label) => (
+                {[
+                  t('dict.app:indexBusTagInduction'),
+                  t('dict.menu:ppe'),
+                  t('dict.menu:inspections'),
+                  t('dict.app:indexBusTagIncidents'),
+                  t('dict.app:indexBusTagTraining'),
+                  t('dict.app:indexBusTagMore'),
+                ].map((label) => (
                   <span key={label} className="rounded-lg border border-dashed border-border px-3 py-1.5 font-mono text-xs text-muted-foreground">{label}</span>
                 ))}
               </div>

@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import Icon from '@/components/ui/icon';
+import { useTranslate } from '@/core';
 import { DictionaryConfig, DictionaryItem } from '@/data/dictionaries';
 import { useDictionaryStore } from '@/context/DictionaryStoreContext';
 import { useToast } from '@/hooks/use-toast';
@@ -26,6 +27,7 @@ interface DictionaryFormDialogProps {
 const DictionaryFormDialog = ({ open, onOpenChange, mode, config, item }: DictionaryFormDialogProps) => {
   const { createItem, updateItem } = useDictionaryStore();
   const { toast } = useToast();
+  const { t } = useTranslate();
 
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
@@ -53,7 +55,10 @@ const DictionaryFormDialog = ({ open, onOpenChange, mode, config, item }: Dictio
         owner: owner.trim(),
         description: description.trim() || undefined,
       });
-      toast({ title: 'Запись создана', description: `«${created.name}» добавлена в справочник «${config.title}»` });
+      toast({
+        title: t('dict.app:dictFormToastCreatedTitle'),
+        description: t('dict.app:dictFormToastCreatedDesc', { params: { name: created.name, title: config.title } }),
+      });
     } else if (item) {
       updateItem(config.id, item.id, {
         name: name.trim(),
@@ -61,7 +66,10 @@ const DictionaryFormDialog = ({ open, onOpenChange, mode, config, item }: Dictio
         owner: owner.trim(),
         description: description.trim() || undefined,
       });
-      toast({ title: 'Изменения сохранены', description: `Запись «${name.trim()}» обновлена` });
+      toast({
+        title: t('dict.app:dictFormToastUpdatedTitle'),
+        description: t('dict.app:dictFormToastUpdatedDesc', { params: { name: name.trim() } }),
+      });
     }
 
     onOpenChange(false);
@@ -76,32 +84,34 @@ const DictionaryFormDialog = ({ open, onOpenChange, mode, config, item }: Dictio
               <Icon name={mode === 'create' ? 'Plus' : 'Pencil'} size={16} className="text-primary" />
             </div>
             <DialogTitle className="font-display">
-              {mode === 'create' ? `Новая запись: ${config.title}` : `Редактирование записи`}
+              {mode === 'create'
+                ? t('dict.app:dictFormCreateTitle', { params: { title: config.title } })
+                : t('dict.app:dictFormEditTitle')}
             </DialogTitle>
           </div>
           <DialogDescription>
             {mode === 'create'
-              ? `Заполните данные для справочника «${config.title}».`
-              : 'Изменения будут сохранены в записи справочника.'}
+              ? t('dict.app:dictFormCreateDesc', { params: { title: config.title } })
+              : t('dict.app:dictFormEditDesc')}
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-2">
           <div className="grid gap-2">
-            <Label htmlFor="dict-name">Название</Label>
-            <Input id="dict-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Название записи" />
+            <Label htmlFor="dict-name">{t('dict.ui:name')}</Label>
+            <Input id="dict-name" value={name} onChange={(e) => setName(e.target.value)} placeholder={t('dict.app:dictFormNamePlaceholder')} />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="dict-code">Код</Label>
-            <Input id="dict-code" value={code} onChange={(e) => setCode(e.target.value)} placeholder={`Например, ${config.codePrefix}-003`} className="font-mono" />
+            <Label htmlFor="dict-code">{t('dict.ui:code')}</Label>
+            <Input id="dict-code" value={code} onChange={(e) => setCode(e.target.value)} placeholder={t('dict.app:dictFormCodePlaceholder', { params: { prefix: config.codePrefix } })} className="font-mono" />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="dict-owner">Ответственный</Label>
-            <Input id="dict-owner" value={owner} onChange={(e) => setOwner(e.target.value)} placeholder="ФИО ответственного" />
+            <Label htmlFor="dict-owner">{t('dict.ui:owner')}</Label>
+            <Input id="dict-owner" value={owner} onChange={(e) => setOwner(e.target.value)} placeholder={t('dict.app:ownerPlaceholder')} />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="dict-desc">Описание</Label>
-            <Textarea id="dict-desc" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Краткое описание (необязательно)" rows={3} />
+            <Label htmlFor="dict-desc">{t('dict.ui:description')}</Label>
+            <Textarea id="dict-desc" value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t('dict.app:dictFormDescPlaceholder')} rows={3} />
           </div>
         </div>
 
@@ -110,7 +120,7 @@ const DictionaryFormDialog = ({ open, onOpenChange, mode, config, item }: Dictio
             onClick={() => onOpenChange(false)}
             className="rounded-lg border border-border px-4 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
-            Отмена
+            {t('dict.buttons:cancel')}
           </button>
           <button
             onClick={handleSubmit}
@@ -118,7 +128,7 @@ const DictionaryFormDialog = ({ open, onOpenChange, mode, config, item }: Dictio
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-all hover:glow disabled:cursor-not-allowed disabled:opacity-40"
           >
             <Icon name={mode === 'create' ? 'Plus' : 'Check'} size={15} />
-            {mode === 'create' ? 'Создать' : 'Сохранить'}
+            {mode === 'create' ? t('dict.buttons:create') : t('dict.buttons:save')}
           </button>
         </DialogFooter>
       </DialogContent>

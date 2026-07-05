@@ -6,7 +6,9 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
+import { useTranslate } from '@/core';
 import { DictionaryConfig, DictionaryItem, statusTone } from '@/data/dictionaries';
+import { DICTIONARY_STATUS_KEY } from '@/i18n/statusKeys';
 
 interface DictionaryViewDialogProps {
   open: boolean;
@@ -16,6 +18,7 @@ interface DictionaryViewDialogProps {
 }
 
 const DictionaryViewDialog = ({ open, onOpenChange, config, item }: DictionaryViewDialogProps) => {
+  const { t } = useTranslate();
   if (!item) return null;
 
   return (
@@ -33,19 +36,19 @@ const DictionaryViewDialog = ({ open, onOpenChange, config, item }: DictionaryVi
 
         <div className="grid gap-3 py-2">
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Код" icon="Hash" value={item.code} mono />
-            <Field label="Статус" icon="CircleDot">
+            <Field label={t('dict.ui:code')} icon="Hash" value={item.code} mono />
+            <Field label={t('dict.ui:status')} icon="CircleDot">
               <span className={`rounded-full border px-2.5 py-0.5 font-mono text-[11px] ${statusTone[item.status]}`}>
-                {item.status}
+                {t(`dict.statuses:${DICTIONARY_STATUS_KEY[item.status]}`)}
               </span>
             </Field>
-            <Field label="Ответственный" icon="UserCircle2" value={item.owner} />
-            <Field label="Дата создания" icon="CalendarPlus" value={item.createdAt} />
-            <Field label="Последнее изменение" icon="History" value={item.updatedAt} />
+            <Field label={t('dict.ui:owner')} icon="UserCircle2" value={item.owner} />
+            <Field label={t('dict.ui:createdAt')} icon="CalendarPlus" value={item.createdAt} />
+            <Field label={t('dict.ui:updatedAt')} icon="History" value={item.updatedAt} />
           </div>
           {item.description ? (
             <div className="rounded-xl border border-border bg-secondary/30 px-4 py-3">
-              <div className="mb-1 font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">Описание</div>
+              <div className="mb-1 font-mono text-[11px] uppercase tracking-[0.1em] text-muted-foreground">{t('dict.ui:description')}</div>
               <p className="text-sm text-foreground/90">{item.description as string}</p>
             </div>
           ) : null}

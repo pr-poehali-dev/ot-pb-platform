@@ -15,7 +15,9 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import Icon from '@/components/ui/icon';
+import { useTranslate } from '@/core';
 import { DictionaryConfig, DictionaryItem, DictionaryStatus, statusTone } from '@/data/dictionaries';
+import { DICTIONARY_STATUS_KEY } from '@/i18n/statusKeys';
 
 type SortKey = 'name' | 'code' | 'createdAt' | 'updatedAt';
 type SortDir = 'asc' | 'desc';
@@ -32,6 +34,7 @@ interface DictionaryTableProps {
 const STATUS_FILTERS: Array<DictionaryStatus | 'all'> = ['all', 'Активен', 'Черновик', 'Архив'];
 
 const DictionaryTable = ({ config, items, onView, onEdit, onArchive, onRestore }: DictionaryTableProps) => {
+  const { t } = useTranslate();
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<DictionaryStatus | 'all'>('all');
   const [sortKey, setSortKey] = useState<SortKey>('createdAt');
@@ -78,19 +81,19 @@ const DictionaryTable = ({ config, items, onView, onEdit, onArchive, onRestore }
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={`Поиск по «${config.title}»…`}
+            placeholder={t('dict.app:dictTableSearchPlaceholder', { params: { title: config.title } })}
             className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
         </div>
 
         <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as DictionaryStatus | 'all')}>
           <SelectTrigger className="w-44 border-border bg-background/60 glass">
-            <SelectValue placeholder="Статус" />
+            <SelectValue placeholder={t('dict.ui:status')} />
           </SelectTrigger>
           <SelectContent className="glass border-border">
             {STATUS_FILTERS.map((s) => (
               <SelectItem key={s} value={s}>
-                {s === 'all' ? 'Все статусы' : s}
+                {s === 'all' ? t('dict.app:dictTableAllStatuses') : t(`dict.statuses:${DICTIONARY_STATUS_KEY[s]}`)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -108,22 +111,22 @@ const DictionaryTable = ({ config, items, onView, onEdit, onArchive, onRestore }
             <TableRow className="border-border hover:bg-transparent">
               <TableHead className="text-muted-foreground">
                 <button onClick={() => toggleSort('code')} className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-wide">
-                  Код <SortIcon column="code" />
+                  {t('dict.ui:code')} <SortIcon column="code" />
                 </button>
               </TableHead>
               <TableHead className="text-muted-foreground">
                 <button onClick={() => toggleSort('name')} className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-wide">
-                  Название <SortIcon column="name" />
+                  {t('dict.ui:name')} <SortIcon column="name" />
                 </button>
               </TableHead>
-              <TableHead className="text-muted-foreground">Ответственный</TableHead>
-              <TableHead className="text-muted-foreground">Статус</TableHead>
+              <TableHead className="text-muted-foreground">{t('dict.ui:owner')}</TableHead>
+              <TableHead className="text-muted-foreground">{t('dict.ui:status')}</TableHead>
               <TableHead className="text-muted-foreground">
                 <button onClick={() => toggleSort('createdAt')} className="flex items-center gap-1.5 font-mono text-xs uppercase tracking-wide">
-                  Создано <SortIcon column="createdAt" />
+                  {t('dict.app:dictTableColumnCreated')} <SortIcon column="createdAt" />
                 </button>
               </TableHead>
-              <TableHead className="text-right text-muted-foreground">Действия</TableHead>
+              <TableHead className="text-right text-muted-foreground">{t('dict.app:dictTableColumnActions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -134,7 +137,7 @@ const DictionaryTable = ({ config, items, onView, onEdit, onArchive, onRestore }
                 <TableCell className="text-sm text-muted-foreground">{item.owner}</TableCell>
                 <TableCell>
                   <span className={`rounded-full border px-2.5 py-0.5 font-mono text-[11px] ${statusTone[item.status]}`}>
-                    {item.status}
+                    {t(`dict.statuses:${DICTIONARY_STATUS_KEY[item.status]}`)}
                   </span>
                 </TableCell>
                 <TableCell className="font-mono text-xs text-muted-foreground">{item.createdAt}</TableCell>
@@ -143,14 +146,14 @@ const DictionaryTable = ({ config, items, onView, onEdit, onArchive, onRestore }
                     <button
                       onClick={() => onView(item)}
                       className="grid h-8 w-8 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
-                      title="Просмотреть"
+                      title={t('dict.app:viewAction')}
                     >
                       <Icon name="Eye" size={14} />
                     </button>
                     <button
                       onClick={() => onEdit(item)}
                       className="grid h-8 w-8 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-accent/40 hover:text-accent"
-                      title="Редактировать"
+                      title={t('dict.buttons:edit')}
                     >
                       <Icon name="Pencil" size={14} />
                     </button>
@@ -158,7 +161,7 @@ const DictionaryTable = ({ config, items, onView, onEdit, onArchive, onRestore }
                       <button
                         onClick={() => onRestore(item)}
                         className="grid h-8 w-8 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
-                        title="Восстановить"
+                        title={t('dict.buttons:restore')}
                       >
                         <Icon name="RotateCcw" size={14} />
                       </button>
@@ -166,7 +169,7 @@ const DictionaryTable = ({ config, items, onView, onEdit, onArchive, onRestore }
                       <button
                         onClick={() => onArchive(item)}
                         className="grid h-8 w-8 place-items-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-amber-400/50 hover:text-amber-400"
-                        title="Архивировать"
+                        title={t('dict.buttons:archive')}
                       >
                         <Icon name="Archive" size={14} />
                       </button>
@@ -181,7 +184,7 @@ const DictionaryTable = ({ config, items, onView, onEdit, onArchive, onRestore }
         {filtered.length === 0 && (
           <div className="grid place-items-center py-14 text-center">
             <Icon name="SearchX" size={28} className="mb-3 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">Записи не найдены</p>
+            <p className="text-sm text-muted-foreground">{t('dict.app:dictTableNoRecords')}</p>
           </div>
         )}
       </div>

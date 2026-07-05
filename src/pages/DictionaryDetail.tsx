@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
+import { useTranslate } from '@/core';
 import { getDictionaryConfig } from '@/data/dictionaries';
 import DictionaryCrud from '@/components/dictionary/DictionaryCrud';
 import DictionaryTree from '@/components/dictionary/DictionaryTree';
@@ -17,6 +18,7 @@ import { useDictionaryPreferences } from '@/hooks/useDictionaryPreferences';
 const DictionaryDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslate();
   const { favorites, recent, toggleFavorite, pushRecent } = useDictionaryPreferences();
 
   const config = id ? getDictionaryConfig(id) : undefined;
@@ -39,13 +41,13 @@ const DictionaryDetail = () => {
             <button
               onClick={() => navigate('/')}
               className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-primary/15 glow transition-transform hover:scale-105"
-              title="Noventra Core"
+              title={`${t('common:brand.name')} ${t('common:brand.suffix')}`}
             >
               <Icon name="Hexagon" size={20} className="text-primary" />
             </button>
             <div className="min-w-0">
-              <div className="truncate font-display text-sm font-bold tracking-tight">Единые справочники</div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-primary">Core Dictionaries</div>
+              <div className="truncate font-display text-sm font-bold tracking-tight">{t('dict.menu:directories')}</div>
+              <div className="font-mono text-[10px] uppercase tracking-[0.15em] text-primary">{t('dict.app:dictDetailBadge')}</div>
             </div>
           </div>
 
@@ -62,7 +64,7 @@ const DictionaryDetail = () => {
               className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
             >
               <Icon name="ArrowLeft" size={16} />
-              Noventra Core
+              {t('common:brand.name')} {t('common:brand.suffix')}
             </button>
           </div>
         </aside>
@@ -76,13 +78,13 @@ const DictionaryDetail = () => {
               className="inline-flex items-center gap-1.5 rounded-lg border border-border glass px-3 py-1.5 transition-colors hover:border-primary/40 hover:text-primary"
             >
               <Icon name="ArrowLeft" size={14} />
-              Noventra Core
+              {t('common:brand.name')} {t('common:brand.suffix')}
             </button>
             {config && (
               <>
                 <Icon name="ChevronRight" size={13} />
                 <button onClick={() => navigate('/directories')} className="transition-colors hover:text-primary">
-                  Единые справочники
+                  {t('dict.menu:directories')}
                 </button>
               </>
             )}
@@ -103,13 +105,13 @@ const DictionaryDetail = () => {
           {config ? (
             <>
               <div className="mb-6 flex flex-wrap items-center gap-1.5 font-mono text-xs text-muted-foreground">
-                <span className="hidden lg:inline">Единые справочники</span>
+                <span className="hidden lg:inline">{t('dict.menu:directories')}</span>
                 <Icon name="ChevronRight" size={13} className="hidden lg:inline" />
                 <span className="text-foreground">{config.title}</span>
               </div>
               <DictionaryCrud config={config} />
               <footer className="mt-10 flex items-center justify-between border-t border-border pt-6 font-mono text-[11px] text-muted-foreground">
-                <span>Noventra Core · Единые справочники</span>
+                <span>{t('common:brand.name')} {t('common:brand.suffix')} · {t('dict.menu:directories')}</span>
                 <span>{config.title}</span>
               </footer>
             </>
