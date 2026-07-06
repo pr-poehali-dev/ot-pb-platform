@@ -3,6 +3,7 @@ import Icon from '@/components/ui/icon';
 import { useTranslate } from '@/core';
 import { CATEGORIES, DICTIONARIES, DictionaryCategory } from '@/data/dictionaries';
 import { useDictionaryStore } from '@/context/DictionaryStoreContext';
+import { dictMetaTitleKey } from '@/i18n/dictionaryMetaKeys';
 
 interface DictionaryTreeProps {
   activeId?: string;
@@ -30,8 +31,11 @@ const DictionaryTree = ({ activeId, favorites, onToggleFavorite, onSelect }: Dic
   const filteredIds = useMemo(() => {
     if (!query.trim()) return null;
     const q = query.toLowerCase();
-    return new Set(DICTIONARIES.filter((d) => d.title.toLowerCase().includes(q)).map((d) => d.id));
-  }, [query]);
+    return new Set(
+      DICTIONARIES.filter((d) => t(dictMetaTitleKey(d.id), { fallback: d.title }).toLowerCase().includes(q)).map((d) => d.id)
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, t]);
 
   return (
     <div className="flex h-full flex-col">
@@ -95,7 +99,7 @@ const DictionaryTree = ({ activeId, favorites, onToggleFavorite, onSelect }: Dic
                       >
                         <button onClick={() => onSelect(d.id)} className="flex min-w-0 flex-1 items-center gap-2 text-left">
                           <Icon name={d.icon} size={15} className={`shrink-0 ${isActive ? 'text-primary' : ''}`} />
-                          <span className="min-w-0 flex-1 truncate">{d.title}</span>
+                          <span className="min-w-0 flex-1 truncate">{t(dictMetaTitleKey(d.id), { fallback: d.title })}</span>
                           <span
                             className={`shrink-0 rounded-full border px-1.5 py-0.5 font-mono text-[10px] ${
                               isActive ? 'border-primary/30 text-primary' : 'border-border text-muted-foreground'

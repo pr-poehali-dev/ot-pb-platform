@@ -8,6 +8,7 @@ import {
 import Icon from '@/components/ui/icon';
 import { useTranslate } from '@/core';
 import { Node } from '@/data/entities';
+import { historyActionKey } from '@/i18n/historyActionKeys';
 
 interface EntityHistoryDialogProps {
   open: boolean;
@@ -43,7 +44,12 @@ const EntityHistoryDialog = ({ open, onOpenChange, entity }: EntityHistoryDialog
                   <div className="absolute -left-6 top-0.5 grid h-4 w-4 place-items-center rounded-full bg-primary/15 ring-4 ring-background">
                     <Icon name={event.icon} size={10} className="text-primary" />
                   </div>
-                  <div className="text-sm font-medium">{event.action}</div>
+                  <div className="text-sm font-medium">
+                    {(() => {
+                      const key = historyActionKey(event.action);
+                      return key ? t(key) : event.action;
+                    })()}
+                  </div>
                   <div className="mt-0.5 flex items-center gap-2 font-mono text-[11px] text-muted-foreground">
                     <Icon name="UserCircle2" size={12} />
                     {event.author}

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Icon from '@/components/ui/icon';
 import { useTranslate } from '@/core';
 import { getDictionaryConfig } from '@/data/dictionaries';
+import { dictMetaTitleKey } from '@/i18n/dictionaryMetaKeys';
 import DictionaryCrud from '@/components/dictionary/DictionaryCrud';
 import DictionaryTree from '@/components/dictionary/DictionaryTree';
 import DictionaryHub from '@/components/dictionary/DictionaryHub';
@@ -107,12 +108,12 @@ const DictionaryDetail = () => {
               <div className="mb-6 flex flex-wrap items-center gap-1.5 font-mono text-xs text-muted-foreground">
                 <span className="hidden lg:inline">{t('dict.menu:directories')}</span>
                 <Icon name="ChevronRight" size={13} className="hidden lg:inline" />
-                <span className="text-foreground">{config.title}</span>
+                <span className="text-foreground">{t(dictMetaTitleKey(config.id), { fallback: config.title })}</span>
               </div>
               <DictionaryCrud config={config} />
               <footer className="mt-10 flex items-center justify-between border-t border-border pt-6 font-mono text-[11px] text-muted-foreground">
                 <span>{t('common:brand.name')} {t('common:brand.suffix')} · {t('dict.menu:directories')}</span>
-                <span>{config.title}</span>
+                <span>{t(dictMetaTitleKey(config.id), { fallback: config.title })}</span>
               </footer>
             </>
           ) : (

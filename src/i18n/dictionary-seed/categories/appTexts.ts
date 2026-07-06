@@ -96,6 +96,10 @@ export const appTexts: TermTuple[] = [
   // Entity Actions Menu / History Dialog
   ['entityActionsHistoryLabel', 'История изменений', 'Change history', 'Өзгерістер тарихы', 'Değişiklik geçmişi', '变更历史'],
   ['entityHistoryDialogEmpty', 'История изменений пуста', 'Change history is empty', 'Өзгерістер тарихы бос', 'Değişiklik geçmişi boş', '暂无变更历史'],
+  ['historyEntityCreated', 'Сущность создана', 'Entity created', 'Нысан құрылды', 'Varlık oluşturuldu', '实体已创建'],
+  ['historyEntityArchived', 'Сущность архивирована', 'Entity archived', 'Нысан мұрағатталды', 'Varlık arşivlendi', '实体已归档'],
+  ['historyEntityRestored', 'Сущность восстановлена из архива', 'Entity restored from archive', 'Нысан мұрағаттан қалпына келтірілді', 'Varlık arşivden geri yüklendi', '实体已从归档中恢复'],
+  ['historyNoChanges', 'Данные обновлены без изменений', 'Data updated with no changes', 'Деректер өзгеріссіз жаңартылды', 'Veriler değişiklik yapılmadan güncellendi', '数据已更新，无变更'],
 
   // Dictionary Detail page
   ['dictDetailBadge', 'Core Dictionaries', 'Core Dictionaries', 'Өзек анықтамалықтары', 'Çekirdek Kayıtları', '核心目录'],

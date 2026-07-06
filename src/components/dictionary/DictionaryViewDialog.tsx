@@ -9,6 +9,7 @@ import Icon from '@/components/ui/icon';
 import { useTranslate } from '@/core';
 import { DictionaryConfig, DictionaryItem, statusTone } from '@/data/dictionaries';
 import { DICTIONARY_STATUS_KEY } from '@/i18n/statusKeys';
+import { dictMetaTitleKey } from '@/i18n/dictionaryMetaKeys';
 
 interface DictionaryViewDialogProps {
   open: boolean;
@@ -31,7 +32,7 @@ const DictionaryViewDialog = ({ open, onOpenChange, config, item }: DictionaryVi
             </div>
             <DialogTitle className="font-display">{item.name}</DialogTitle>
           </div>
-          <DialogDescription>{config.title} · {item.code}</DialogDescription>
+          <DialogDescription>{t(dictMetaTitleKey(config.id), { fallback: config.title })} · {item.code}</DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-3 py-2">

@@ -2,6 +2,7 @@ import Icon from '@/components/ui/icon';
 import { useTranslate } from '@/core';
 import { DICTIONARIES, getDictionaryConfig } from '@/data/dictionaries';
 import { useDictionaryStore } from '@/context/DictionaryStoreContext';
+import { dictMetaTitleKey, dictMetaDescKey } from '@/i18n/dictionaryMetaKeys';
 
 interface DictionaryHubProps {
   favorites: string[];
@@ -55,8 +56,8 @@ const DictionaryHub = ({ favorites, recent, onSelect, onToggleFavorite }: Dictio
             <DictionaryCard
               key={d.id}
               id={d.id}
-              title={d.title}
-              description={d.description}
+              fallbackTitle={d.title}
+              fallbackDescription={d.description}
               icon={d.icon}
               count={getItems(d.id).length}
               isFavorite={favorites.includes(d.id)}
@@ -80,8 +81,8 @@ const DictionaryHub = ({ favorites, recent, onSelect, onToggleFavorite }: Dictio
               <DictionaryCard
                 key={d.id}
                 id={d.id}
-                title={d.title}
-                description={d.description}
+                fallbackTitle={d.title}
+                fallbackDescription={d.description}
                 icon={d.icon}
                 count={getItems(d.id).length}
                 isFavorite
@@ -109,7 +110,7 @@ const DictionaryHub = ({ favorites, recent, onSelect, onToggleFavorite }: Dictio
                 className="inline-flex items-center gap-2 rounded-xl border border-border glass px-3.5 py-2 text-sm transition-colors hover:border-primary/40 hover:text-primary"
               >
                 <Icon name={d.icon} size={15} />
-                {d.title}
+                {t(dictMetaTitleKey(d.id), { fallback: d.title })}
               </button>
             ))}
           </div>
@@ -131,8 +132,8 @@ const StatCard = ({ icon, label, value }: { icon: string; label: string; value: 
 
 const DictionaryCard = ({
   id,
-  title,
-  description,
+  fallbackTitle,
+  fallbackDescription,
   icon,
   count,
   isFavorite,
@@ -141,8 +142,8 @@ const DictionaryCard = ({
   delay,
 }: {
   id: string;
-  title: string;
-  description: string;
+  fallbackTitle: string;
+  fallbackDescription: string;
   icon: string;
   count: number;
   isFavorite: boolean;
@@ -151,6 +152,8 @@ const DictionaryCard = ({
   delay: number;
 }) => {
   const { t } = useTranslate();
+  const title = t(dictMetaTitleKey(id), { fallback: fallbackTitle });
+  const description = t(dictMetaDescKey(id), { fallback: fallbackDescription });
   return (
     <div
       className="group animate-float-in relative flex flex-col overflow-hidden rounded-2xl border border-border glass p-5 transition-all hover:border-primary/40"

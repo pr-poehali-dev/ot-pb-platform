@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { DictionaryConfig, DictionaryItem } from '@/data/dictionaries';
 import { useDictionaryStore } from '@/context/DictionaryStoreContext';
 import { useTranslate } from '@/core';
+import { dictMetaTitleKey, dictMetaDescKey } from '@/i18n/dictionaryMetaKeys';
 import DictionaryTable from './DictionaryTable';
 import DictionaryFormDialog from './DictionaryFormDialog';
 import DictionaryViewDialog from './DictionaryViewDialog';
@@ -67,8 +68,8 @@ const DictionaryCrud = ({ config }: DictionaryCrudProps) => {
             <Icon name={config.icon} size={20} className="text-primary" />
           </div>
           <div>
-            <h2 className="font-display text-xl font-semibold">{config.title}</h2>
-            <p className="text-sm text-muted-foreground">{config.description}</p>
+            <h2 className="font-display text-xl font-semibold">{t(dictMetaTitleKey(config.id), { fallback: config.title })}</h2>
+            <p className="text-sm text-muted-foreground">{t(dictMetaDescKey(config.id), { fallback: config.description })}</p>
           </div>
         </div>
         <button
