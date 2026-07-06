@@ -100,6 +100,13 @@ export const appTexts: TermTuple[] = [
   ['historyEntityArchived', 'Сущность архивирована', 'Entity archived', 'Нысан мұрағатталды', 'Varlık arşivlendi', '实体已归档'],
   ['historyEntityRestored', 'Сущность восстановлена из архива', 'Entity restored from archive', 'Нысан мұрағаттан қалпына келтірілді', 'Varlık arşivden geri yüklendi', '实体已从归档中恢复'],
   ['historyNoChanges', 'Данные обновлены без изменений', 'Data updated with no changes', 'Деректер өзгеріссіз жаңартылды', 'Veriler değişiklik yapılmadan güncellendi', '数据已更新，无变更'],
+  ['historyOwnerChangedDemo', 'Изменён ответственный', 'Owner changed', 'Жауапты өзгертілді', 'Sorumlu değiştirildi', '负责人已更改'],
+  ['historyStatusChangedDemo', 'Обновлён статус', 'Status updated', 'Мәртебе жаңартылды', 'Durum güncellendi', '状态已更新'],
+  ['historyChangeName', 'название «{{before}}» → «{{after}}»', 'name "{{before}}" → "{{after}}"', 'атауы «{{before}}» → «{{after}}»', 'ad "{{before}}" → "{{after}}"', '名称 "{{before}}" → "{{after}}"'],
+  ['historyChangeCode', 'код «{{before}}» → «{{after}}»', 'code "{{before}}" → "{{after}}"', 'код «{{before}}» → «{{after}}»', 'kod "{{before}}" → "{{after}}"', '代码 "{{before}}" → "{{after}}"'],
+  ['historyChangeOwner', 'ответственный «{{before}}» → «{{after}}»', 'owner "{{before}}" → "{{after}}"', 'жауапты «{{before}}» → «{{after}}»', 'sorumlu "{{before}}" → "{{after}}"', '负责人 "{{before}}" → "{{after}}"'],
+  ['historyChangeDescription', 'описание', 'description', 'сипаттама', 'açıklama', '描述'],
+  ['historyUpdatedPrefix', 'Изменено: {{changes}}', 'Changed: {{changes}}', 'Өзгертілді: {{changes}}', 'Değiştirildi: {{changes}}', '已更改：{{changes}}'],
 
   // Dictionary Detail page
   ['dictDetailBadge', 'Core Dictionaries', 'Core Dictionaries', 'Өзек анықтамалықтары', 'Çekirdek Kayıtları', '核心目录'],
