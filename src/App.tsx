@@ -13,7 +13,7 @@ import EntityCard from "./pages/EntityCard";
 import NotFound from "./pages/NotFound";
 import { EntityStoreProvider } from "./context/EntityStoreContext";
 import { DictionaryStoreProvider } from "./context/DictionaryStoreContext";
-import { initAuditEventBridge, aiCore } from "@/core";
+import { initAuditEventBridge, aiCore, businessRulesService } from "@/core";
 import { registerDemoTranslations } from "@/i18n/registerDemoTranslations";
 import { seedTranslationDictionary } from "@/i18n/dictionary-seed";
 
@@ -22,6 +22,8 @@ initAuditEventBridge();
 // Единая точка инициализации AI Engine: регистрация встроенных провайдеров
 // (API пока не подключены) + мост Event Bus → AI Action Log.
 aiCore.initAICore();
+// Единая точка инициализации Business Rules Engine: мост Event Bus → Rule Audit Log.
+businessRulesService.initBusinessRulesEngine();
 // Демонстрационные переводы для Language Engine (меню, кнопки, заголовки).
 registerDemoTranslations();
 // Базовый словарь Translation Management (~1000 терминов HSE-платформы).

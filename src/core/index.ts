@@ -23,6 +23,7 @@
  *  - user-settings      — настройки пользователя
  *  - language           — Language Engine (мультиязычность)
  *  - ai-engine          — AI Engine (независимый движок искусственного интеллекта)
+ *  - business-rules     — Business Rules Engine (независимый движок бизнес-правил)
  */
 
 export * from './types';
@@ -43,3 +44,4 @@ export * from './recent-items';
 export * from './user-settings';
 export * from './language';
 export * from './ai-engine';
+export * from './business-rules';
