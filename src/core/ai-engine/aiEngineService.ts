@@ -55,16 +55,25 @@ async function send(request: AIRequest): Promise<AIResponse> {
   const provider = providerRegistry.getProvider(providerId);
 
   if (!provider) {
-    throw new Error(`AI provider "${providerId}" is not registered`);
+    const error = `AI provider "${providerId}" is not registered`;
+    eventBus.emit('ai-engine.request_failed', { providerId, error }, 'ai-engine');
+    throw new Error(error);
   }
   if (!provider.meta.enabled) {
-    throw new Error(`AI provider "${providerId}" is disabled`);
+    const error = `AI provider "${providerId}" is disabled`;
+    eventBus.emit('ai-engine.request_failed', { providerId, error }, 'ai-engine');
+    throw new Error(error);
   }
 
   eventBus.emit('ai-engine.request_sent', { providerId, request }, 'ai-engine');
-  const response = await provider.send(request);
-  eventBus.emit('ai-engine.response_received', { providerId, response }, 'ai-engine');
-  return response;
+  try {
+    const response = await provider.send(request);
+    eventBus.emit('ai-engine.response_received', { providerId, response }, 'ai-engine');
+    return response;
+  } catch (error) {
+    eventBus.emit('ai-engine.request_failed', { providerId, error: String(error) }, 'ai-engine');
+    throw error;
+  }
 }
 
 export const aiEngineService = {
