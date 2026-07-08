@@ -4,6 +4,7 @@ import Icon from '@/components/ui/icon';
 import { useTranslate } from '@/core';
 import LanguageMenuButton from '@/components/language/LanguageMenuButton';
 import ProfileSettingsDialog from '@/components/language/ProfileSettingsDialog';
+import NoventraAIButton from '@/components/ai/NoventraAIButton';
 
 const NAV = [
   { id: 'overview', labelKey: 'menu:overview', icon: 'LayoutGrid' },
@@ -126,6 +127,7 @@ const Index = () => {
                 <Icon name="Bell" size={18} className="text-muted-foreground" />
                 <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-accent px-1 font-mono text-[10px] text-accent-foreground">7</span>
               </button>
+              <NoventraAIButton />
               <LanguageMenuButton />
               <button
                 onClick={() => setProfileOpen(true)}
