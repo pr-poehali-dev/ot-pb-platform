@@ -1,12 +1,15 @@
 import { ruleRegistry } from './ruleRegistry';
 import { ruleExecutor } from './ruleExecutor';
 import { ruleAuditLog, initRuleAuditLogBridge } from './ruleAuditLog';
+import { rulePrecedenceResolver } from './rulePrecedenceResolver';
+import { legislationChangeRegistry } from './legislationChangeRegistry';
 
 /**
  * Business Rules Engine — единый сервис для вызова бизнес-правил из любого
  * будущего модуля платформы. По аналогии с aiCore (AI Engine): объединяет
- * Rule Registry, Rule Executor и Rule Audit Log в один фасад, оставляя
- * возможность импортировать сервисы по отдельности.
+ * Rule Registry, Rule Executor, Rule Audit Log, Rule Precedence Resolver и
+ * Legislation Change Registry в один фасад, оставляя возможность
+ * импортировать сервисы по отдельности.
  *
  * initBusinessRulesEngine() — единая точка инициализации (поднимает мост
  * Event Bus → Rule Audit Log), вызывается один раз при старте приложения,
@@ -32,4 +35,6 @@ export const businessRulesService = {
   registry: ruleRegistry,
   executor: ruleExecutor,
   auditLog: ruleAuditLog,
+  precedence: rulePrecedenceResolver,
+  legislation: legislationChangeRegistry,
 };

@@ -1,7 +1,14 @@
 import { createStore } from '../shared/createStore';
 import { eventBus } from '../event-bus';
 import { EntityRef } from '../types';
-import { RuleAuditEntry, RuleCategoryValue, RuleOutcome, RuleResult, RuleSeverity } from './types';
+import {
+  RuleAuditEntry,
+  RuleCategoryValue,
+  RuleExplanation,
+  RuleOutcome,
+  RuleResult,
+  RuleSeverity,
+} from './types';
 
 /**
  * Rule Audit Log — журнал выполнения бизнес-правил, по архитектуре Audit Log
@@ -9,6 +16,10 @@ import { RuleAuditEntry, RuleCategoryValue, RuleOutcome, RuleResult, RuleSeverit
  * хранилище в памяти, запись только через record(), без прямого доступа
  * извне к store. Слушает события Rule Executor через Event Bus
  * (см. initRuleAuditLogBridge) — вызывающий код не обязан писать в журнал сам.
+ *
+ * Каждая запись хранит не только исход, но и объяснение (приоритет, версия,
+ * источник правила) — журнал сам по себе служит подтверждением объяснимости
+ * решений движка и основой для будущих Analytics Engine / Dashboard.
  */
 let counter = 0;
 const nextId = () => `rule-audit-${++counter}`;
@@ -17,12 +28,15 @@ const store = createStore<RuleAuditEntry[]>([]);
 
 interface RecordRuleAuditInput {
   ruleId: string;
-  category: RuleCategoryValue;
+  category?: RuleCategoryValue;
   outcome: RuleOutcome;
   severity: RuleSeverity;
   actor: string;
   message: string;
   entity?: EntityRef;
+  priority?: RuleExplanation['priority'];
+  version?: number;
+  source?: RuleExplanation['source'];
   metadata?: Record<string, unknown>;
 }
 
@@ -36,6 +50,9 @@ function record(input: RecordRuleAuditInput): RuleAuditEntry {
     actor: input.actor,
     message: input.message,
     entity: input.entity,
+    priority: input.priority,
+    version: input.version,
+    source: input.source,
     metadata: input.metadata,
     timestamp: new Date().toISOString(),
   };
@@ -82,8 +99,9 @@ export function initRuleAuditLogBridge(): void {
     actor: string;
     entity?: EntityRef;
     result: RuleResult;
+    explanation: RuleExplanation;
   }>('business-rules.rule_evaluated', (event) => {
-    const { ruleId, category, actor, entity, result } = event.payload;
+    const { ruleId, category, actor, entity, result, explanation } = event.payload;
     record({
       ruleId,
       category,
@@ -92,11 +110,14 @@ export function initRuleAuditLogBridge(): void {
       actor,
       message: result.message,
       entity: result.affectedEntity ?? entity,
+      priority: explanation?.priority,
+      version: explanation?.version,
+      source: explanation?.source,
       metadata: result.metadata,
     });
   });
 
-  eventBus.on<{ ruleId: string; category: RuleCategoryValue; actor: string; entity?: EntityRef; error: string }>(
+  eventBus.on<{ ruleId: string; category?: RuleCategoryValue; actor: string; entity?: EntityRef; error: string }>(
     'business-rules.rule_failed',
     (event) => {
       const { ruleId, category, actor, entity, error } = event.payload;
