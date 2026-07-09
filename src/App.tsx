@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import { EntityStoreProvider } from "./context/EntityStoreContext";
 import { DictionaryStoreProvider } from "./context/DictionaryStoreContext";
 import { initAuditEventBridge, aiCore, businessRulesService } from "@/core";
+import { registerAllDomainRules } from "@/core/business-rules/domain-rules";
 import { registerDemoTranslations } from "@/i18n/registerDemoTranslations";
 import { seedTranslationDictionary } from "@/i18n/dictionary-seed";
 
@@ -24,6 +25,8 @@ initAuditEventBridge();
 aiCore.initAICore();
 // Единая точка инициализации Business Rules Engine: мост Event Bus → Rule Audit Log.
 businessRulesService.initBusinessRulesEngine();
+// Регистрация доменных библиотек правил (допуск техники и т.д.) в ruleRegistry.
+registerAllDomainRules();
 // Демонстрационные переводы для Language Engine (меню, кнопки, заголовки).
 registerDemoTranslations();
 // Базовый словарь Translation Management (~1000 терминов HSE-платформы).

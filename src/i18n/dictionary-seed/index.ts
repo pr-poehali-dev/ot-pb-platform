@@ -37,6 +37,7 @@ import { hierarchyLevelsTerms } from './categories/hierarchyLevels';
 import { dictionaryCategoriesTerms } from './categories/dictionaryCategories';
 import { dictionaryMetaTerms } from './categories/dictionaryMeta';
 import { aiEngineTerms } from './categories/aiEngine';
+import { businessRulesTerms } from './categories/businessRules';
 
 /**
  * Базовый словарь Translation Management — центрального словаря переводов
@@ -92,6 +93,7 @@ export function seedTranslationDictionary(): void {
     ...buildTerms('dict.dictCategories', dictionaryCategoriesTerms),
     ...buildTerms('dict.dictMeta', dictionaryMetaTerms),
     ...buildTerms('ai-engine', aiEngineTerms),
+    ...buildTerms('dict.businessRules', businessRulesTerms),
   ]);
 }
 
@@ -133,6 +135,7 @@ export const DICTIONARY_CATEGORY_COUNTS: Record<string, number> = {
   'dict.dictCategories': dictionaryCategoriesTerms.length,
   'dict.dictMeta': dictionaryMetaTerms.length,
   'ai-engine': aiEngineTerms.length,
+  'dict.businessRules': businessRulesTerms.length,
 };
 
 export const TOTAL_DICTIONARY_TERMS = Object.values(DICTIONARY_CATEGORY_COUNTS).reduce((sum, n) => sum + n, 0);

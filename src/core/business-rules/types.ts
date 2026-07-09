@@ -21,8 +21,56 @@ import { EntityRef, ISODateString } from '../types';
  * сможет генерировать `evaluate` из декларативных условий поверх этого же контракта.
  */
 
-/** Итог выполнения правила. */
-export type RuleOutcome = 'passed' | 'failed' | 'warning' | 'requiresHumanDecision';
+/**
+ * Итог выполнения правила — единый перечень статусов Business Rules Engine
+ * для всей платформы:
+ *  - passed           — 🟢 Допущено
+ *  - warning           — 🟡 Замечание
+ *  - failed            — 🔴 Не допущено
+ *  - pendingDecision    — 🔵 Ожидает решения
+ *
+ * pendingDecision устанавливается ТОЛЬКО когда Business Rules Engine не может
+ * принять однозначное решение по бизнес-правилам (законодательство/корпоративные
+ * требования вступают в противоречие, отсутствуют данные для проверки, ситуация
+ * юридически значима и т.д.) — движок никогда не принимает окончательное решение
+ * автоматически в такой ситуации. Причина недоступности решения обязана быть
+ * в RuleResult.message, а сработавшие правила — в RuleExecutionResult.explanation
+ * (и в списке результатов ruleExecutor.executeRuleKey()/executeCategory()).
+ * Если правило считает уместным использовать AI как рекомендацию — оно помечает
+ * suggestedAIUse: true, но решение всё равно остаётся за ответственным лицом.
+ * После решения ответственного лица итоговый статус (passed/warning/failed)
+ * фиксируется вызывающим модулем через ruleRegistry.updateRule()/повторное
+ * выполнение правила — Business Rules Engine не хранит отдельного workflow
+ * согласования, это ответственность модуля-потребителя.
+ */
+export type RuleOutcome = 'passed' | 'warning' | 'failed' | 'pendingDecision';
+
+/**
+ * Метаданные отображения статуса (эмодзи + ключ перевода) — данные, а не UI.
+ * Не создаёт никакого интерфейса, лишь единый источник истины для меток статусов,
+ * которые любой будущий модуль/Dashboard может использовать при отображении.
+ * Русская метка (label) — дефолтное значение, если Language Engine недоступен;
+ * labelKey ссылается на перевод в словаре (namespace 'dict.businessRules'),
+ * что не нарушает мультиязычность платформы.
+ */
+export interface RuleOutcomeDefinition {
+  outcome: RuleOutcome;
+  emoji: string;
+  label: string;
+  labelKey: string;
+}
+
+export const RULE_OUTCOME_DEFINITIONS: Record<RuleOutcome, RuleOutcomeDefinition> = {
+  passed: { outcome: 'passed', emoji: '🟢', label: 'Допущено', labelKey: 'dict.businessRules:outcome.passed' },
+  warning: { outcome: 'warning', emoji: '🟡', label: 'Замечание', labelKey: 'dict.businessRules:outcome.warning' },
+  failed: { outcome: 'failed', emoji: '🔴', label: 'Не допущено', labelKey: 'dict.businessRules:outcome.failed' },
+  pendingDecision: {
+    outcome: 'pendingDecision',
+    emoji: '🔵',
+    label: 'Ожидает решения',
+    labelKey: 'dict.businessRules:outcome.pendingDecision',
+  },
+};
 
 /** Серьёзность результата правила. */
 export type RuleSeverity = 'low' | 'medium' | 'high' | 'critical';
@@ -178,8 +226,9 @@ export interface BusinessRule {
   /**
    * Допускает ли это правило переопределение более специфичным правилом
    * нижестоящего приоритета (см. RULE_PRIORITY_RANK) в рамках того же ruleKey.
-   * Законодательные правила с outcome 'failed' / 'requiresHumanDecision'
-   * никогда не переопределяются — это гарантия архитектуры, а не только флаг.
+   * Законодательные правила с outcome 'failed' / 'pendingDecision' никогда не
+   * переопределяются нижестоящими уровнями — это гарантия архитектуры, а не
+   * только флаг.
    */
   overridable: boolean;
   /** Дата вступления правила в силу (включительно). Если не задана — действует сразу. */
