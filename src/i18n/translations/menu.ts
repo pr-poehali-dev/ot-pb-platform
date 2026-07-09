@@ -23,6 +23,7 @@ export const menuTranslations: NamespaceResource = {
     notifications: 'Уведомления',
     audit: 'Журнал действий',
     api: 'API ядра',
+    personnelClearance: 'Предварительный допуск персонала',
   },
   en: {
     overview: 'Overview',
@@ -41,6 +42,7 @@ export const menuTranslations: NamespaceResource = {
     notifications: 'Notifications',
     audit: 'Audit Log',
     api: 'Core API',
+    personnelClearance: 'Personnel Pre-Clearance',
   },
   kk: {
     overview: 'Шолу',
@@ -59,6 +61,7 @@ export const menuTranslations: NamespaceResource = {
     notifications: 'Хабарландырулар',
     audit: 'Әрекеттер журналы',
     api: 'Өзек API',
+    personnelClearance: 'Персоналды алдын ала жіберу',
   },
   tr: {
     overview: 'Genel Bakış',
@@ -77,6 +80,7 @@ export const menuTranslations: NamespaceResource = {
     notifications: 'Bildirimler',
     audit: 'Denetim Günlüğü',
     api: 'Çekirdek API',
+    personnelClearance: 'Personel Ön Yetkilendirme',
   },
   zh: {
     overview: '概览',
@@ -95,5 +99,6 @@ export const menuTranslations: NamespaceResource = {
     notifications: '通知',
     audit: '操作日志',
     api: '核心API',
+    personnelClearance: '人员预先准入',
   },
 };

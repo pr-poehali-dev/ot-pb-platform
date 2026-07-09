@@ -10,6 +10,15 @@ import DictionaryDetail from "./pages/DictionaryDetail";
 import Hierarchy from "./pages/Hierarchy";
 import EntityLinks from "./pages/EntityLinks";
 import EntityCard from "./pages/EntityCard";
+import PersonnelClearanceIndex from "./pages/personnel-clearance/PersonnelClearanceIndex";
+import PersonnelClearanceWorkers from "./pages/personnel-clearance/PersonnelClearanceWorkers";
+import PersonnelClearancePackages from "./pages/personnel-clearance/PersonnelClearancePackages";
+import PersonnelClearanceRequirementMatrices from "./pages/personnel-clearance/PersonnelClearanceRequirementMatrices";
+import PersonnelClearanceApprovalRoutes from "./pages/personnel-clearance/PersonnelClearanceApprovalRoutes";
+import PersonnelClearanceDocumentVerification from "./pages/personnel-clearance/PersonnelClearanceDocumentVerification";
+import PersonnelClearanceSecurityService from "./pages/personnel-clearance/PersonnelClearanceSecurityService";
+import PersonnelClearanceHistory from "./pages/personnel-clearance/PersonnelClearanceHistory";
+import PersonnelClearanceSettings from "./pages/personnel-clearance/PersonnelClearanceSettings";
 import NotFound from "./pages/NotFound";
 import { EntityStoreProvider } from "./context/EntityStoreContext";
 import { DictionaryStoreProvider } from "./context/DictionaryStoreContext";
@@ -50,6 +59,15 @@ const App = () => (
               <Route path="/hierarchy" element={<Hierarchy />} />
               <Route path="/entity-links" element={<EntityLinks />} />
               <Route path="/entity/:id" element={<EntityCard />} />
+              <Route path="/personnel-clearance" element={<PersonnelClearanceIndex />} />
+              <Route path="/personnel-clearance/workers" element={<PersonnelClearanceWorkers />} />
+              <Route path="/personnel-clearance/clearance-packages" element={<PersonnelClearancePackages />} />
+              <Route path="/personnel-clearance/requirement-matrices" element={<PersonnelClearanceRequirementMatrices />} />
+              <Route path="/personnel-clearance/approval-routes" element={<PersonnelClearanceApprovalRoutes />} />
+              <Route path="/personnel-clearance/document-verification" element={<PersonnelClearanceDocumentVerification />} />
+              <Route path="/personnel-clearance/security-service" element={<PersonnelClearanceSecurityService />} />
+              <Route path="/personnel-clearance/history" element={<PersonnelClearanceHistory />} />
+              <Route path="/personnel-clearance/settings" element={<PersonnelClearanceSettings />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

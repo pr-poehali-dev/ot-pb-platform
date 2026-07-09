@@ -11,6 +11,7 @@ const NAV = [
   { id: 'directories', labelKey: 'menu:directories', icon: 'Library', to: '/directories' },
   { id: 'hierarchy', labelKey: 'menu:hierarchy', icon: 'Workflow', to: '/hierarchy' },
   { id: 'entity-links', labelKey: 'menu:entity-links', icon: 'GitBranch', to: '/entity-links' },
+  { id: 'personnel-clearance', labelKey: 'menu:personnelClearance', icon: 'ShieldCheck', to: '/personnel-clearance' },
   { id: 'auth', labelKey: 'menu:auth', icon: 'KeyRound' },
   { id: 'users', labelKey: 'menu:users', icon: 'Users' },
   { id: 'roles', labelKey: 'menu:roles', icon: 'ShieldCheck' },

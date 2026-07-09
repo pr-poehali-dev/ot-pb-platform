@@ -45,4 +45,5 @@ export const menuTerms: TermTuple[] = [
   ['fireSafety', 'Пожарная безопасность', 'Fire Safety', 'Өрт қауіпсіздігі', 'Yangın Güvenliği', '消防安全'],
   ['industrialSafety', 'Промышленная безопасность', 'Industrial Safety', 'Өнеркәсіптік қауіпсіздік', 'Endüstriyel Güvenlik', '工业安全'],
   ['laborProtection', 'Охрана труда', 'Labor Protection', 'Еңбекті қорғау', 'İş Güvenliği', '劳动保护'],
+  ['personnelClearance', 'Предварительный допуск персонала', 'Personnel Pre-Clearance', 'Персоналды алдын ала жіберу', 'Personel Ön Yetkilendirme', '人员预先准入'],
 ];
