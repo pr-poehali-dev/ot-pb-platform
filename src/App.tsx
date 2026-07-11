@@ -14,6 +14,7 @@ import PersonnelClearanceIndex from "./pages/personnel-clearance/PersonnelCleara
 import PersonnelClearanceWorkers from "./pages/personnel-clearance/PersonnelClearanceWorkers";
 import PersonnelClearancePackages from "./pages/personnel-clearance/PersonnelClearancePackages";
 import PersonnelClearanceRequirementMatrices from "./pages/personnel-clearance/PersonnelClearanceRequirementMatrices";
+import PersonnelClearanceRequirementMatrixCard from "./pages/personnel-clearance/PersonnelClearanceRequirementMatrixCard";
 import PersonnelClearanceApprovalRoutes from "./pages/personnel-clearance/PersonnelClearanceApprovalRoutes";
 import PersonnelClearanceDocumentVerification from "./pages/personnel-clearance/PersonnelClearanceDocumentVerification";
 import PersonnelClearanceSecurityService from "./pages/personnel-clearance/PersonnelClearanceSecurityService";
@@ -22,8 +23,9 @@ import PersonnelClearanceSettings from "./pages/personnel-clearance/PersonnelCle
 import NotFound from "./pages/NotFound";
 import { EntityStoreProvider } from "./context/EntityStoreContext";
 import { DictionaryStoreProvider } from "./context/DictionaryStoreContext";
-import { initAuditEventBridge, aiCore, businessRulesService } from "@/core";
+import { initAuditEventBridge, aiCore, businessRulesService, registerStubReferenceLists } from "@/core";
 import { registerAllDomainRules } from "@/core/business-rules/domain-rules";
+import { registerAllMatrixDomains } from "@/core/requirement-matrix/domain-configs";
 import { registerDemoTranslations } from "@/i18n/registerDemoTranslations";
 import { seedTranslationDictionary } from "@/i18n/dictionary-seed";
 
@@ -36,6 +38,10 @@ aiCore.initAICore();
 businessRulesService.initBusinessRulesEngine();
 // Регистрация доменных библиотек правил (допуск техники и т.д.) в ruleRegistry.
 registerAllDomainRules();
+// Временные заглушки справочных списков Reference Data Engine.
+registerStubReferenceLists();
+// Регистрация доменов применения Requirement Matrix Engine (допуск персонала и т.д.).
+registerAllMatrixDomains();
 // Демонстрационные переводы для Language Engine (меню, кнопки, заголовки).
 registerDemoTranslations();
 // Базовый словарь Translation Management (~1000 терминов HSE-платформы).
@@ -63,6 +69,7 @@ const App = () => (
               <Route path="/personnel-clearance/workers" element={<PersonnelClearanceWorkers />} />
               <Route path="/personnel-clearance/clearance-packages" element={<PersonnelClearancePackages />} />
               <Route path="/personnel-clearance/requirement-matrices" element={<PersonnelClearanceRequirementMatrices />} />
+              <Route path="/personnel-clearance/requirement-matrices/:id" element={<PersonnelClearanceRequirementMatrixCard />} />
               <Route path="/personnel-clearance/approval-routes" element={<PersonnelClearanceApprovalRoutes />} />
               <Route path="/personnel-clearance/document-verification" element={<PersonnelClearanceDocumentVerification />} />
               <Route path="/personnel-clearance/security-service" element={<PersonnelClearanceSecurityService />} />

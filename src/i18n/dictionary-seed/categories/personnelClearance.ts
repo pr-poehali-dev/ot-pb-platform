@@ -24,4 +24,19 @@ export const personnelClearanceTerms: TermTuple[] = [
 
   // Временный заголовок содержимого вкладок
   ['tabPlaceholder', 'Раздел «{{tab}}» находится в разработке', 'The "{{tab}}" section is under development', '«{{tab}}» бөлімі әзірленуде', '"{{tab}}" bölümü geliştirme aşamasında', '"{{tab}}"版块正在开发中'],
+
+  // Измерения критериев матрицы требований (вкладки карточки матрицы, домен personnel-clearance)
+  ['tabWorkerCategories', 'Категории работников', 'Worker Categories', 'Қызметкерлер санаттары', 'Çalışan Kategorileri', '员工类别'],
+  ['tabCitizenships', 'Гражданство', 'Citizenship', 'Азаматтық', 'Vatandaşlık', '国籍'],
+  ['tabProfessions', 'Профессии', 'Professions', 'Кәсіптер', 'Meslekler', '职业'],
+  ['tabPositions', 'Должности', 'Positions', 'Лауазымдар', 'Pozisyonlar', '职位'],
+  ['tabWorkTypes', 'Виды работ', 'Work Types', 'Жұмыс түрлері', 'İş Türleri', '工作类型'],
+  ['tabProjects', 'Проекты', 'Projects', 'Жобалар', 'Projeler', '项目'],
+  ['tabObjects', 'Объекты', 'Objects', 'Нысандар', 'Nesneler', '对象'],
+  ['tabOrganizations', 'Организации (подрядчики)', 'Organizations (Contractors)', 'Ұйымдар (мердігерлер)', 'Kuruluşlar (Yükleniciler)', '组织（承包商）'],
+
+  // Заглушки справочных списков Reference Data Engine для этого домена
+  ['refWorkerCategories', 'Категории работников', 'Worker Categories', 'Қызметкерлер санаттары', 'Çalışan Kategorileri', '员工类别'],
+  ['refCitizenships', 'Гражданство', 'Citizenship', 'Азаматтық', 'Vatandaşlık', '国籍'],
+  ['refDocumentTypes', 'Типы документов допуска', 'Clearance Document Types', 'Жіберу құжаттарының түрлері', 'Yetkilendirme Belge Türleri', '准入文件类型'],
 ];

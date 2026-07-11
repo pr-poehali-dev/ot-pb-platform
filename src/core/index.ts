@@ -24,6 +24,8 @@
  *  - language           — Language Engine (мультиязычность)
  *  - ai-engine          — AI Engine (независимый движок искусственного интеллекта)
  *  - business-rules     — Business Rules Engine (независимый движок бизнес-правил)
+ *  - reference-data     — Reference Data Engine (единый движок справочных данных)
+ *  - requirement-matrix — Requirement Matrix Engine (универсальный движок матриц требований)
  */
 
 export * from './types';
@@ -45,3 +47,5 @@ export * from './user-settings';
 export * from './language';
 export * from './ai-engine';
 export * from './business-rules';
+export * from './reference-data';
+export * from './requirement-matrix';
