@@ -88,11 +88,21 @@ export const requirementMatrixTerms: TermTuple[] = [
   ['documentsEmptyOptional', 'Дополнительные документы ещё не добавлены', 'No optional documents added yet', 'Қосымша құжаттар әлі қосылмаған', 'Henüz ek belge eklenmedi', '尚未添加附加文件'],
   ['documentsAddAction', 'Добавить документ', 'Add document', 'Құжат қосу', 'Belge ekle', '添加文件'],
 
-  // Измерения критериев (динамические вкладки)
+  // Измерения критериев (динамические вкладки — устаревший режим, сохранён для совместимости)
   ['criteriaModeAll', 'Все значения', 'All values', 'Барлық мәндер', 'Tüm değerler', '所有值'],
   ['criteriaModeSpecific', 'Выбранные значения', 'Selected values', 'Таңдалған мәндер', 'Seçilen değerler', '选定值'],
   ['criteriaMandatoryLabel', 'Обязательное условие', 'Mandatory condition', 'Міндетті шарт', 'Zorunlu koşul', '强制条件'],
   ['criteriaEmptyState', 'Список значений пока не подключён — используется заглушка Reference Data Engine', 'Value list not yet connected — using Reference Data Engine stub', 'Мәндер тізімі әлі қосылмаған — Reference Data Engine бос орны қолданылады', 'Değer listesi henüz bağlanmadı — Reference Data Engine taslağı kullanılıyor', '值列表尚未连接——使用Reference Data Engine占位数据'],
+
+  // Раздел «Критерии применения» (единая вкладка карточки матрицы)
+  ['tabCriteria', 'Критерии применения', 'Applicability Criteria', 'Қолдану критерийлері', 'Uygulanabilirlik Kriterleri', '适用标准'],
+  ['criteriaSectionDesc', 'Добавляйте критерии, определяющие, к кому и к чему применяется матрица.', 'Add criteria that define who and what the matrix applies to.', 'Матрица кімге және неге қолданылатынын анықтайтын критерийлерді қосыңыз.', 'Matrisin kime ve neye uygulandığını belirleyen kriterleri ekleyin.', '添加决定矩阵适用对象的标准。'],
+  ['criteriaTypePlaceholder', 'Тип критерия', 'Criterion type', 'Критерий түрі', 'Kriter türü', '标准类型'],
+  ['criteriaAddAction', 'Добавить критерий', 'Add criterion', 'Критерий қосу', 'Kriter ekle', '添加标准'],
+  ['criteriaAllTypesAdded', 'Все доступные типы критериев уже добавлены', 'All available criterion types already added', 'Барлық қолжетімді критерий түрлері қосылды', 'Mevcut tüm kriter türleri zaten eklendi', '所有可用标准类型均已添加'],
+  ['criteriaSectionEmpty', 'Критерии применения ещё не добавлены — матрица применяется без ограничений', 'No applicability criteria added yet — the matrix applies without restrictions', 'Қолдану критерийлері әлі қосылмаған — матрица шектеусіз қолданылады', 'Henüz uygulanabilirlik kriteri eklenmedi — matris kısıtlama olmadan uygulanır', '尚未添加适用标准——矩阵将不受限制地应用'],
+  ['criteriaEnabled', 'Включён', 'Enabled', 'Қосулы', 'Etkin', '已启用'],
+  ['criteriaDisabled', 'Отключён', 'Disabled', 'Өшірулі', 'Devre dışı', '已禁用'],
 
   // Настройки обязательности
   ['mandatoryToggleLabel', 'Матрица обязательна к применению', 'Matrix is mandatory', 'Матрица қолдануға міндетті', 'Matris uygulaması zorunludur', '矩阵为强制性'],

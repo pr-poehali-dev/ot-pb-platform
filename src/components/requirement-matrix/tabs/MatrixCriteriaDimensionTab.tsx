@@ -31,10 +31,12 @@ const MatrixCriteriaDimensionTab = ({ dimension, selection, onChange }: MatrixCr
   const mode = selection?.mode ?? 'all';
   const selectedItemIds = selection?.selectedItemIds ?? [];
   const mandatory = selection?.mandatory ?? false;
+  const enabled = selection?.enabled ?? true;
 
   const emit = (patch: Partial<MatrixCriteriaSelection>) => {
     onChange({
       dimensionId: dimension.id,
+      enabled,
       mode,
       selectedItemIds,
       mandatory,

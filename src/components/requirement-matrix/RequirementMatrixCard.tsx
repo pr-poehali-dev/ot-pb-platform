@@ -16,7 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import MatrixGeneralInfoTab from './tabs/MatrixGeneralInfoTab';
 import MatrixScopeTab from './tabs/MatrixScopeTab';
 import MatrixDocumentsTab from './tabs/MatrixDocumentsTab';
-import MatrixCriteriaDimensionTab from './tabs/MatrixCriteriaDimensionTab';
+import MatrixCriteriaSectionTab from './tabs/MatrixCriteriaSectionTab';
 import MatrixMandatorySettingsTab from './tabs/MatrixMandatorySettingsTab';
 import MatrixPriorityTab from './tabs/MatrixPriorityTab';
 import MatrixHistoryTab from './tabs/MatrixHistoryTab';
@@ -34,20 +34,22 @@ const nextDocId = () => `doc-${++docIdCounter}`;
  * Универсальная карточка матрицы требований — единый UI для любого домена
  * применения Requirement Matrix Engine.
  *
- * Состав вкладок:
- *  - 7 статичных: Общая информация, Область применения, Обязательные
- *    документы, Дополнительные документы, Настройки обязательности,
- *    Приоритет матрицы, История изменений;
- *  - N динамических: по одной вкладке на каждое измерение критериев,
- *    зарегистрированное для домена этой матрицы через
- *    matrixCriteriaDimensionRegistry (для personnel-clearance — 8 вкладок:
- *    Категории работников, Гражданство, Профессии, Должности, Виды работ,
- *    Проекты, Объекты, Организации).
+ * Состав вкладок (8 статичных, одинаковых для любого домена):
+ *  Общая информация, Область применения, Обязательные документы,
+ *  Дополнительные документы, Критерии применения, Настройки обязательности,
+ *  Приоритет матрицы, История изменений.
  *
- * Расширение без изменения архитектуры: чтобы добавить новое измерение
- * критериев (например «Уровень допуска» для другого домена), достаточно
+ * Раздел «Критерии применения» — единая вкладка со списком критериев,
+ * которые администратор добавил в эту матрицу (тип критерия выбирается из
+ * зарегистрированных для домена измерений — matrixCriteriaDimensionRegistry).
+ * Для personnel-clearance зарегистрировано 8 типов: категория работника,
+ * гражданство, профессия, должность, вид работ, проект, объект, организация.
+ *
+ * Расширение без изменения архитектуры: чтобы добавить новый тип критерия
+ * (например «Уровень допуска» для другого домена), достаточно
  * зарегистрировать его через matrixCriteriaDimensionRegistry.registerDimension() —
- * эта карточка отрисует вкладку автоматически, ничего в этом файле менять не нужно.
+ * он автоматически появится в разделе «Критерии применения», ничего в этом
+ * файле менять не нужно.
  */
 const RequirementMatrixCard = ({ matrixId, actor, onBack }: RequirementMatrixCardProps) => {
   const { t } = useTranslate();
@@ -93,9 +95,30 @@ const RequirementMatrixCard = ({ matrixId, actor, onBack }: RequirementMatrixCar
     }
   };
 
+  const handleAddCriterion = (dimensionId: string) => {
+    const dimension = dimensions.find((d) => d.id === dimensionId);
+    const newCriterion: MatrixCriteriaSelection = {
+      dimensionId,
+      enabled: true,
+      mode: 'all',
+      selectedItemIds: [],
+      mandatory: false,
+    };
+    persist(`Добавлен критерий «${dimension ? t(dimension.labelKey) : dimensionId}»`, {
+      criteria: [...matrix.criteria, newCriterion],
+    });
+  };
+
+  const handleRemoveCriterion = (dimensionId: string) => {
+    const dimension = dimensions.find((d) => d.id === dimensionId);
+    persist(`Удалён критерий «${dimension ? t(dimension.labelKey) : dimensionId}»`, {
+      criteria: matrix.criteria.filter((c) => c.dimensionId !== dimensionId),
+    });
+  };
+
   const handleCriteriaChange = (selection: MatrixCriteriaSelection) => {
-    const next = matrix.criteria.filter((c) => c.dimensionId !== selection.dimensionId);
-    persist('Изменены критерии применения', { criteria: [...next, selection] });
+    const next = matrix.criteria.map((c) => (c.dimensionId === selection.dimensionId ? selection : c));
+    persist('Изменён критерий применения', { criteria: next });
   };
 
   const handleToggleMandatory = (mandatory: boolean) => {
@@ -171,18 +194,10 @@ const RequirementMatrixCard = ({ matrixId, actor, onBack }: RequirementMatrixCar
             <Icon name="FilePlus2" size={15} />
             {t('dict.requirementMatrix:tabOptionalDocuments')}
           </TabsTrigger>
-
-          {dimensions.map((dimension) => (
-            <TabsTrigger
-              key={dimension.id}
-              value={`dimension-${dimension.id}`}
-              className="gap-1.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary"
-            >
-              <Icon name={dimension.icon} size={15} />
-              {t(dimension.labelKey)}
-            </TabsTrigger>
-          ))}
-
+          <TabsTrigger value="criteria" className="gap-1.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
+            <Icon name="ListChecks" size={15} />
+            {t('dict.requirementMatrix:tabCriteria')}
+          </TabsTrigger>
           <TabsTrigger value="mandatory" className="gap-1.5 data-[state=active]:bg-primary/10 data-[state=active]:text-primary">
             <Icon name="ToggleLeft" size={15} />
             {t('dict.requirementMatrix:tabMandatorySettings')}
@@ -213,15 +228,15 @@ const RequirementMatrixCard = ({ matrixId, actor, onBack }: RequirementMatrixCar
           <MatrixDocumentsTab documents={matrix.optionalDocuments} mandatory={false} onAdd={handleAddDocument(false)} />
         </TabsContent>
 
-        {dimensions.map((dimension) => (
-          <TabsContent key={dimension.id} value={`dimension-${dimension.id}`} className="mt-0">
-            <MatrixCriteriaDimensionTab
-              dimension={dimension}
-              selection={matrix.criteria.find((c) => c.dimensionId === dimension.id)}
-              onChange={withToast(handleCriteriaChange)}
-            />
-          </TabsContent>
-        ))}
+        <TabsContent value="criteria" className="mt-0">
+          <MatrixCriteriaSectionTab
+            dimensions={dimensions}
+            criteria={matrix.criteria}
+            onAdd={withToast(handleAddCriterion)}
+            onRemove={withToast(handleRemoveCriterion)}
+            onChange={handleCriteriaChange}
+          />
+        </TabsContent>
 
         <TabsContent value="mandatory" className="mt-0">
           <MatrixMandatorySettingsTab matrix={matrix} onToggleMandatory={withToast(handleToggleMandatory)} />
