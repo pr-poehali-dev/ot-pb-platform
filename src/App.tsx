@@ -13,6 +13,7 @@ import EntityCard from "./pages/EntityCard";
 import PersonnelClearanceIndex from "./pages/personnel-clearance/PersonnelClearanceIndex";
 import PersonnelClearanceWorkers from "./pages/personnel-clearance/PersonnelClearanceWorkers";
 import PersonnelClearancePackages from "./pages/personnel-clearance/PersonnelClearancePackages";
+import PersonnelClearancePackageCard from "./pages/personnel-clearance/PersonnelClearancePackageCard";
 import PersonnelClearanceRequirementMatrices from "./pages/personnel-clearance/PersonnelClearanceRequirementMatrices";
 import PersonnelClearanceRequirementMatrixCard from "./pages/personnel-clearance/PersonnelClearanceRequirementMatrixCard";
 import PersonnelClearanceApprovalRoutes from "./pages/personnel-clearance/PersonnelClearanceApprovalRoutes";
@@ -23,7 +24,7 @@ import PersonnelClearanceSettings from "./pages/personnel-clearance/PersonnelCle
 import NotFound from "./pages/NotFound";
 import { EntityStoreProvider } from "./context/EntityStoreContext";
 import { DictionaryStoreProvider } from "./context/DictionaryStoreContext";
-import { initAuditEventBridge, aiCore, businessRulesService, registerStubReferenceLists } from "@/core";
+import { initAuditEventBridge, aiCore, businessRulesService, registerStubReferenceLists, initClearancePackageEngine } from "@/core";
 import { registerAllDomainRules } from "@/core/business-rules/domain-rules";
 import { registerAllMatrixDomains } from "@/core/requirement-matrix/domain-configs";
 import { registerDemoTranslations } from "@/i18n/registerDemoTranslations";
@@ -42,6 +43,8 @@ registerAllDomainRules();
 registerStubReferenceLists();
 // Регистрация доменов применения Requirement Matrix Engine (допуск персонала и т.д.).
 registerAllMatrixDomains();
+// Регистрация базовых категорий требований Clearance Package Engine.
+initClearancePackageEngine();
 // Демонстрационные переводы для Language Engine (меню, кнопки, заголовки).
 registerDemoTranslations();
 // Базовый словарь Translation Management (~1000 терминов HSE-платформы).
@@ -68,6 +71,7 @@ const App = () => (
               <Route path="/personnel-clearance" element={<PersonnelClearanceIndex />} />
               <Route path="/personnel-clearance/workers" element={<PersonnelClearanceWorkers />} />
               <Route path="/personnel-clearance/clearance-packages" element={<PersonnelClearancePackages />} />
+              <Route path="/personnel-clearance/clearance-packages/:id" element={<PersonnelClearancePackageCard />} />
               <Route path="/personnel-clearance/requirement-matrices" element={<PersonnelClearanceRequirementMatrices />} />
               <Route path="/personnel-clearance/requirement-matrices/:id" element={<PersonnelClearanceRequirementMatrixCard />} />
               <Route path="/personnel-clearance/approval-routes" element={<PersonnelClearanceApprovalRoutes />} />

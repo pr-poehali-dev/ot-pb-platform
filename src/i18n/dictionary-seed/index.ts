@@ -40,6 +40,7 @@ import { aiEngineTerms } from './categories/aiEngine';
 import { businessRulesTerms } from './categories/businessRules';
 import { personnelClearanceTerms } from './categories/personnelClearance';
 import { requirementMatrixTerms } from './categories/requirementMatrix';
+import { clearancePackageTerms } from './categories/clearancePackage';
 
 /**
  * Базовый словарь Translation Management — центрального словаря переводов
@@ -98,6 +99,7 @@ export function seedTranslationDictionary(): void {
     ...buildTerms('dict.businessRules', businessRulesTerms),
     ...buildTerms('dict.personnelClearance', personnelClearanceTerms),
     ...buildTerms('dict.requirementMatrix', requirementMatrixTerms),
+    ...buildTerms('dict.clearancePackage', clearancePackageTerms),
   ]);
 }
 
@@ -142,6 +144,7 @@ export const DICTIONARY_CATEGORY_COUNTS: Record<string, number> = {
   'dict.businessRules': businessRulesTerms.length,
   'dict.personnelClearance': personnelClearanceTerms.length,
   'dict.requirementMatrix': requirementMatrixTerms.length,
+  'dict.clearancePackage': clearancePackageTerms.length,
 };
 
 export const TOTAL_DICTIONARY_TERMS = Object.values(DICTIONARY_CATEGORY_COUNTS).reduce((sum, n) => sum + n, 0);

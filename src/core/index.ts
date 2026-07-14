@@ -26,6 +26,7 @@
  *  - business-rules     — Business Rules Engine (независимый движок бизнес-правил)
  *  - reference-data     — Reference Data Engine (единый движок справочных данных)
  *  - requirement-matrix — Requirement Matrix Engine (универсальный движок матриц требований)
+ *  - clearance-package   — Clearance Package Engine (центральная сущность допуска персонала)
  */
 
 export * from './types';
@@ -49,3 +50,4 @@ export * from './ai-engine';
 export * from './business-rules';
 export * from './reference-data';
 export * from './requirement-matrix';
+export * from './clearance-package';
