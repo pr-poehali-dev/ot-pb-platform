@@ -124,6 +124,16 @@ export interface PackageRequirement {
 /* ------------------------------------------------------------------------ */
 
 /**
+ * Проверяющая сторона независимой параллельной проверки пакета. Используется
+ * не только полями otPbReview/securityReview самого пакета, но и всеми
+ * сопутствующими архитектурными сущностями (Notification Queue, Review Queue,
+ * Return Reason), которым нужно адресовать что-то конкретной стороне, не
+ * дублируя более широкий DecisionRole (который включает ещё 'contractor' и
+ * 'system').
+ */
+export type ReviewSide = 'ot_pb' | 'security';
+
+/**
  * Статус решения одной проверяющей стороны. Обе стороны (ОТ/ПБ и Служба
  * безопасности) работают полностью независимо друг от друга:
  *  - каждая сторона видит статус другой, но не может его изменить;
@@ -139,6 +149,11 @@ export type ReviewDecisionStatus = 'pending' | 'in_review' | 'approved' | 'rejec
  * Структура одинакова для обеих сторон — они равноправны и не зависят друг
  * от друга; конкретная роль стороны хранится не в этой структуре, а в имени
  * поля на ClearancePackage (otPbReview / securityReview).
+ *
+ * matrixVersionSnapshotIds фиксирует, по каким именно снимкам версий матриц
+ * (см. RequirementMatrixVersionSnapshot) выполнялась ИМЕННО эта проверка —
+ * даже если после решения матрица изменится, известно, какая версия
+ * фактически проверялась этой стороной.
  */
 export interface PackageReview {
   status: ReviewDecisionStatus;
@@ -147,6 +162,8 @@ export interface PackageReview {
   comment?: string;
   /** Требования, которые проверяющий указал доработать (используется при status = 'revision_requested'). */
   requestedRevisionRequirementIds?: string[];
+  /** Снимки версий матриц (RequirementMatrixVersionSnapshot.id), по которым выполнена проверка. */
+  matrixVersionSnapshotIds?: string[];
 }
 
 /* ------------------------------------------------------------------------ */
@@ -200,6 +217,110 @@ export interface RecordDecisionInput {
 }
 
 /* ------------------------------------------------------------------------ */
+/* 8. Requirement Matrix Version — точная версия матрицы на момент проверки */
+/* ------------------------------------------------------------------------ */
+
+/**
+ * Снимок точной версии матрицы требований на момент, когда по ней
+ * выполнялась проверка пакета. Отличается от AppliedMatrixRef: AppliedMatrixRef
+ * фиксирует, что матрица была ПРИМЕНЕНА при формировании требований пакета;
+ * RequirementMatrixVersionSnapshot фиксирует, какая именно версия матрицы
+ * была ЗАФИКСИРОВАНА для нужд конкретной проверки (PackageReview) — это
+ * необходимо, так как матрица может измениться после отправки пакета, но
+ * решение проверяющей стороны должно оставаться привязанным к той версии,
+ * которую она реально видела и оценивала.
+ *
+ * snapshot хранит неизменяемую копию значимых для проверки полей матрицы на
+ * момент фиксации — не ссылку, а именно копию, чтобы будущее изменение или
+ * архивирование матрицы не могло задним числом исказить основание уже
+ * принятого решения.
+ */
+export interface RequirementMatrixVersionSnapshot {
+  id: string;
+  packageId: string;
+  matrixId: string;
+  matrixVersion: number;
+  /** Неизменяемая копия значимых полей матрицы на момент фиксации снимка. */
+  snapshot: {
+    name: string;
+    priority: string;
+    mandatory: boolean;
+    requiredDocumentTypeIds: string[];
+    optionalDocumentTypeIds: string[];
+  };
+  capturedAt: ISODateString;
+}
+
+/* ------------------------------------------------------------------------ */
+/* 5 (ТЗ доработки). Return Reason — причина возврата на доработку          */
+/* ------------------------------------------------------------------------ */
+
+/**
+ * Причина возврата пакета на доработку. Отдельная от PackageReview структура:
+ * PackageReview хранит ТЕКУЩЕЕ состояние проверки стороны, а ReturnReason —
+ * это неизменяемая, накопительная (append-only) запись каждого отдельного
+ * случая возврата, включая явный срок устранения (dueDate) — важно для
+ * будущей Review Queue/SLA (см. core/clearance-package/review-queue).
+ */
+export interface ReturnReason {
+  id: string;
+  packageId: string;
+  returnedBySide: ReviewSide;
+  returnedBy: string;
+  reason: string;
+  comment?: string;
+  /** Требования, которые нужно исправить (пересекается с PackageReview.requestedRevisionRequirementIds). */
+  relatedRequirementIds: string[];
+  returnedAt: ISODateString;
+  /** Срок, до которого подрядчик обязан устранить замечания. */
+  dueDate?: ISODateString;
+}
+
+export interface RecordReturnReasonInput {
+  packageId: string;
+  returnedBySide: ReviewSide;
+  returnedBy: string;
+  reason: string;
+  comment?: string;
+  relatedRequirementIds: string[];
+  dueDate?: ISODateString;
+}
+
+/* ------------------------------------------------------------------------ */
+/* 6 (ТЗ доработки). Resubmission — повторная отправка того же пакета       */
+/* ------------------------------------------------------------------------ */
+
+/**
+ * Запись о повторной отправке ТОГО ЖЕ пакета после устранения замечаний
+ * (п.6 ТЗ доработки): «повторная отправка того же пакета после исправлений
+ * без создания нового». Отдельная append-only структура (не поле пакета) —
+ * пакет может проходить цикл needs_revision → under_review многократно, и
+ * каждый цикл фиксируется отдельной записью, ссылающейся на ReturnReason,
+ * из-за которой доработка потребовалась.
+ */
+export interface ResubmissionEntry {
+  id: string;
+  packageId: string;
+  /** ReturnReason.id, после устранения которой выполнена эта повторная отправка. */
+  returnReasonId?: string;
+  resubmittedBy: string;
+  comment?: string;
+  /** Требования, которые были фактически изменены к моменту повторной отправки. */
+  updatedRequirementIds: string[];
+  resubmittedAt: ISODateString;
+  /** Порядковый номер повторной отправки в рамках пакета (1, 2, 3, ...). */
+  attemptNumber: number;
+}
+
+export interface ResubmitPackageInput {
+  packageId: string;
+  returnReasonId?: string;
+  resubmittedBy: string;
+  comment?: string;
+  updatedRequirementIds: string[];
+}
+
+/* ------------------------------------------------------------------------ */
 /* Единая сущность Пакета допуска                                           */
 /* ------------------------------------------------------------------------ */
 
@@ -234,6 +355,13 @@ export interface ClearancePackage {
 
   /** Если пакет создан при переходе работника из другой организации — id пакета-предшественника. */
   previousPackageId?: string;
+
+  /**
+   * Счётчик повторных отправок того же пакета (см. ResubmissionEntry, п.6
+   * ТЗ доработки) — увеличивается при каждой повторной отправке после
+   * needs_revision, сам пакет при этом не пересоздаётся.
+   */
+  resubmissionCount: number;
 }
 
 /* ------------------------------------------------------------------------ */

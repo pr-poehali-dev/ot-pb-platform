@@ -67,6 +67,7 @@ function createPackage(input: CreateClearancePackageInput): ClearancePackage {
     otPbReview: { status: 'pending' },
     securityReview: { status: 'pending' },
     history: [makeHistoryEntry('create', 'Пакет допуска создан', input.createdBy)],
+    resubmissionCount: 0,
   };
 
   store.setState((prev) => ({ ...prev, [pkg.id]: pkg }));

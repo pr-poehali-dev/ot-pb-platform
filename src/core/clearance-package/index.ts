@@ -9,27 +9,35 @@
  * проверки (ОТ/ПБ и Служба безопасности), и платформа рассчитывает итоговый
  * статус после решений обеих сторон.
  *
- * Состав:
+ * Ядро (плоские файлы этой папки):
  *  - types.ts                              — единый контракт ClearancePackage/
  *                                            PackageRequirement/AppliedMatrixRef/
  *                                            PackageReview/PackageHistoryEntry/
- *                                            DecisionLogEntry, статусы (PackageStatus)
+ *                                            DecisionLogEntry/ReturnReason/
+ *                                            ResubmissionEntry/RequirementMatrixVersionSnapshot,
+ *                                            статусы (PackageStatus), ReviewSide
  *  - requirementCategoryRegistry.ts         — открытый реестр категорий требований
- *                                            (документы/обучение/медосмотры/
- *                                            квалификация/СБ/СИЗ и будущие категории)
- *  - registerBuiltinRequirementCategories.ts — регистрация базовых категорий (п.3 ТЗ)
- *  - clearancePackageService.ts             — реестр пакетов: createPackage()
- *                                            (версия 1) / updatePackage()
- *                                            (версионированное изменение с историей)
- *                                            / queryPackages() (поиск и фильтрация)
- *                                            / getActivePackageForWorker() /
- *                                            listArchivedForWorker() /
- *                                            transitionWorkerToNewOrganization()
- *                                            (модель хранения — см. п.10 ТЗ)
- *  - decisionLogService.ts                  — отдельный журнал оснований решений
- *                                            (Decision Log, п.7 ТЗ)
- *  - useClearancePackages.ts                — React-хук для реестра (поиск/фильтр/создание)
- *  - useClearancePackage.ts                 — React-хук для карточки одного пакета
+ *  - registerBuiltinRequirementCategories.ts — регистрация базовых категорий
+ *  - clearancePackageService.ts             — реестр пакетов (create/update/query,
+ *                                            модель «один активный пакет + архив»)
+ *  - decisionLogService.ts                  — журнал оснований решений (Decision Log)
+ *  - requirementMatrixVersionService.ts     — снимки точных версий матриц,
+ *                                            по которым выполнялась проверка
+ *  - returnReasonService.ts                 — накопительный журнал причин
+ *                                            возврата пакета на доработку
+ *  - resubmissionService.ts                 — повторная отправка ТОГО ЖЕ пакета
+ *                                            после устранения замечаний
+ *  - useClearancePackages.ts / useClearancePackage.ts — React-хуки
+ *
+ * Подсистемы (отдельные подпапки, по образцу core/business-rules/domain-rules/):
+ *  - notification-queue/  — одновременные и повторные уведомления ОТ/ПБ и
+ *                           Службе безопасности + журнал доставки
+ *  - review-queue/         — очередь проверки: приоритет, SLA, просрочка,
+ *                           срочные проверки
+ *  - offline-sync/         — формирование пакета офлайн, очередь
+ *                           синхронизации, контроль конфликтов версий
+ *  - ai-extension-point/   — точка подключения Noventra AI ТОЛЬКО как
+ *                           рекомендательного сервиса, без права решения
  *
  * Принципы:
  *  - Пакет НЕ хранит бизнес-логику проверки — только структуру данных,
@@ -46,10 +54,13 @@
  *    правила (enforcement) относится к будущей бизнес-логике.
  *  - Категории требований — открытый реестр: новая категория добавляется
  *    регистрацией, без изменения структуры ClearancePackage.
+ *  - Noventra AI (ai-extension-point) не имеет доступа к изменению
+ *    PackageStatus/ReviewDecisionStatus/Decision Log — только формирует
+ *    рекомендацию, которую человек может учесть или отклонить.
  *  - На этом этапе реализована только архитектура: модели данных, хранение,
- *    версионирование, история и журнал решений. Проверка документов,
- *    автоматические расчёты и пользовательские интерфейсы проверки НЕ
- *    реализованы.
+ *    версионирование, история и журналы. Проверка документов, автоматические
+ *    расчёты, реальная доставка уведомлений, планировщик SLA, слияние офлайн-
+ *    изменений и вызовы AI Engine НЕ реализованы.
  */
 import { registerBuiltinRequirementCategories } from './registerBuiltinRequirementCategories';
 
@@ -58,8 +69,16 @@ export { requirementCategoryRegistry } from './requirementCategoryRegistry';
 export { registerBuiltinRequirementCategories } from './registerBuiltinRequirementCategories';
 export { clearancePackageService } from './clearancePackageService';
 export { decisionLogService } from './decisionLogService';
+export { requirementMatrixVersionService } from './requirementMatrixVersionService';
+export { returnReasonService } from './returnReasonService';
+export { resubmissionService } from './resubmissionService';
 export { useClearancePackages } from './useClearancePackages';
 export { useClearancePackage } from './useClearancePackage';
+
+export * from './notification-queue';
+export * from './review-queue';
+export * from './offline-sync';
+export * from './ai-extension-point';
 
 let initialized = false;
 
