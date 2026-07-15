@@ -27,6 +27,7 @@
  *  - reference-data     — Reference Data Engine (единый движок справочных данных)
  *  - requirement-matrix — Requirement Matrix Engine (универсальный движок матриц требований)
  *  - clearance-package   — Clearance Package Engine (центральная сущность допуска персонала)
+ *  - workflow-engine     — Universal Workflow State Machine (универсальный движок жизненного цикла)
  */
 
 export * from './types';
@@ -51,3 +52,4 @@ export * from './business-rules';
 export * from './reference-data';
 export * from './requirement-matrix';
 export * from './clearance-package';
+export * from './workflow-engine';
